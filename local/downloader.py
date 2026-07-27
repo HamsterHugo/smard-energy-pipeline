@@ -31,5 +31,22 @@ def update_raw_data(category: str, subcategory: str) -> None:
         subcategory (str): Subcategory key within the category
             (e.g. 'Erdgas', 'Residuallast').
     """
-    # TODO: Implement function body.
-    pass
+    # Check for valid arguments.
+    if category not in FILTERS:
+            console_terminal.log(
+                f"[bold bright_red][ERROR][/] Unknown category: '{category}'"
+            )
+            console_terminal.log(
+                f"[cyan][INFO][/] Available categories: {list(FILTERS.keys())}"
+            )
+            return
+    
+    if subcategory not in FILTERS[category]:
+        console_terminal.log(
+            f"[bold bright_red][ERROR][/] Unknown subcategory: '{subcategory}'"
+        )
+        console_terminal.log(
+            f"[cyan][INFO][/] Available subcategories: "
+            f"{list(FILTERS[category].keys())}"
+        )
+        return
