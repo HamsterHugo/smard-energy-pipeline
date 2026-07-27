@@ -79,3 +79,68 @@ RESOLUTIONS: dict[str, str] = {
     'Monatlich': 'month',
     'Jährlich': 'year'
 }
+
+ENERGY_CATEGORIES: dict[str, dict] = {
+    # Active energies
+    'Braunkohle': {
+        'filter_id': 1223,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Wind Offshore': {
+        'filter_id': 1225,
+        'active': True, 
+        'deprecated_since': None
+    },
+    'Wasserkraft': {
+        'filter_id': 1226,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Sonstige Konventionelle': {
+        'filter_id': 1227,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Sonstige Erneuerbare': {
+        'filter_id': 1228,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Biomasse': {
+        'filter_id': 4066,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Wind Onshore': {
+        'filter_id': 4067,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Photovoltaik': {
+        'filter_id': 4068,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Steinkohle': {
+        'filter_id': 4069,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Pumpspeicher': {
+        'filter_id': 4070,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Erdgas': {
+        'filter_id': 4071,
+        'active': True,
+        'deprecated_since': None
+    },
+    # Inactive energies
+    'Kernenergie': {
+        'filter_id': 1224,
+        'active': False,
+        'deprecated_since': "2023-04-16 0:00"
+    },
+}
