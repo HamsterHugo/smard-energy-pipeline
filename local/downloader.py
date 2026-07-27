@@ -1,4 +1,3 @@
-import sys
 import time
 from os import devnull
 from pathlib import Path
