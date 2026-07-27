@@ -90,11 +90,13 @@ def update_raw_data(category: str, subcategory: str) -> None:
         # Find number of missing files.
         number: int = len(online_timestamps)-len(downloaded_timestamps)
         if number == 1:
-            msg = f'[cyan][INFO][/] There is {number} file missing for {subcategory}!'
+            msg = f'[cyan][INFO][/] There is {number} file missing ' \
+                'for {subcategory}!'
             console_terminal.log(msg)
             console_log.log(msg)
         else:
-            msg = f'[cyan][INFO][/] There are {number} files missing for {subcategory}!'
+            msg = f'[cyan][INFO][/] There are {number} files missing ' \
+                f'for {subcategory}!'
             console_terminal.log(msg)
             console_log.log(msg)
         # Set counter variable for the missing files.
