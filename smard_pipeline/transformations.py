@@ -13,7 +13,7 @@ from smard_pipeline.config import FILTERS
 install()
 
 # Define consols, one for the terminal and one for the logs.
-console = Console(record=True, encoding="utf-8")
+console = Console(record=True)
 
 def merge_raw_data(category: str, subcategory: str) -> pd.DataFrame | None:
     """Loads all raw_data for the queries category and subcategories and merges
