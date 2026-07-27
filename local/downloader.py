@@ -107,9 +107,41 @@ def update_raw_data(category: str, subcategory: str) -> None:
             # Check if the data of the curret timestamp are missing. 
             if timestamp not in downloaded_timestamps:
                 # The timestamp of the current timestamp is missing.
-                # Start download. 
-                # TODO: Implement the download 
-                pass
+                # Start the download. 
+                file_name = f'{filter_id}_{timestamp}.parquet'
+                msg = f'[cyan][INFO][/] Missing file detected: {file_name}'
+                console_log.log(msg)
+
+                try:
+                    data = get_smard_timeseries(filter_id, timestamp)
+                    df = pd.DataFrame(
+                        data['series'],
+                        columns=['timestamp', 'value_mwh']
+                    )
+                    output_path = OUTPUT_DIR / file_name
+                    df.to_parquet(output_path, index=False)
+                    counter += 1
+                    msg = f'[bold green][SUCCESS][/] {file_name} saved ' \
+                        f'successfully! [bold green]✓[/]'
+                    console_log.log(msg)
+                    if counter < number:
+                        msg = f'[cyan][INFO][/] {counter}/{number} updated!'
+                        console_log.log(msg)
+                    else:
+                        msg = f'[bold green][COMPLETED][/] ' \
+                            f'{counter}/{number} updated!'
+                        console_log.log(msg)
+                except Exception as Error:
+                    failed_downloads.append(timestamp)
+                    console_log.print_exception()
+                    msg = f'[bold bright_red][FAILURE][/] Download for Energy ' \
+                        f'data for timestamp {timestamp} for {subcategory} ' \
+                        f'failed! [bold bright_red]✗[/]'
+                    console_log.log()
+                    msg = f'[bold bright_red]ERROR:[/] {Error}'
+                    console_log.log(msg)
+                # Small time out for API request.
+                time.sleep(0.2)
 
         if counter < number:
             # TODO Implement log messages for updating the progress.
