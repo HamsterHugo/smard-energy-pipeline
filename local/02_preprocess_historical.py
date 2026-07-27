@@ -15,8 +15,8 @@ if __name__ == '__main__':
     category = sys.argv[1]
     subcategory = sys.argv[2]
 
-    if sys.argv[2] == 'all':
-        for subcategory in FILTERS[category]:
-            merge_raw_data(category, subcategory)
+    if subcategory == 'all':
+        for current_subcategory in FILTERS[category]:
+            merge_raw_data(category, current_subcategory)
     else:
         merge_raw_data(category, subcategory)
