@@ -52,18 +52,18 @@ def merge_raw_data(category: str, subcategory: str) -> pd.DataFrame | None:
 
     weekly_blocks: list[pd.DataFrame] = [
         pd.read_parquet(file)
-        for file in RAW_DATA_DIR.glob(f'{filter_id}_*.parquet')
+        for file in INPUT_DIR.glob(f'{filter_id}_*.parquet')
     ]
 
     if not weekly_blocks:
-        console(f"[yellow][WARNING][/] No files found for {subcategory}!")
-        console(f"[yellow][WARNING][/] Download raw data for {subcategory} first!")
+        console.log(f"[yellow][WARNING][/] No files found for {subcategory}!")
+        console.log(f"[yellow][WARNING][/] Download raw data for {subcategory} first!")
         return None
 
     df: pd.DataFrame = pd.concat(weekly_blocks, ignore_index=True)
     df.columns = ['timestamps', subcategory]
     df = df.dropna()
-    console(f"[bold green][SUCCESS][/] Merged raw data for {subcategory}!")
+    console.log(f"[bold green][SUCCESS][/] Merged raw data for {subcategory}!")
     console.save_html(
         LOGS_DIR/f'merge_log_{category}_{subcategory}.html',
         theme=MONOKAI
