@@ -1,7 +1,5 @@
 import sys
 
-import pandas as pd
-
 from smard_pipeline.config import FILTERS
 from smard_pipeline.transformations import merge_raw_data
 
