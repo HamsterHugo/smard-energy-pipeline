@@ -30,8 +30,8 @@ FILTERS: dict[str, dict[str, int]] = {
         'Pumpspeicher': 4387
     },
     'Marktpreis': {
-        'Deutschland/Luxemburg': 4169,
-        'Anrainer DE/LU': 5078,
+        'Deutschland-Luxemburg': 4169,
+        'Anrainer DE-LU': 5078,
         'Belgien': 4996,
         'Norwegen 2': 4997,
         'Österreich': 4170,
