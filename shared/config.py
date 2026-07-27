@@ -1,3 +1,12 @@
+from pathlib import Path
+
+ROOT_DIR = Path(__file__).parent.parent
+DATA_DIR = ROOT_DIR / "data"
+RAW_DATA_DIR = DATA_DIR / "raw_data"
+PREPROCESSED_DATA_DIR = DATA_DIR / "preprocessed_data"
+LOGS_DIR = DATA_DIR / "logs"
+
+# base url of the SMARD API.
 BASE_URL: str = "https://www.smard.de/app"
 
 FILTERS: dict[str, dict[str, int]] = {
