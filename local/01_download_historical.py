@@ -1,10 +1,6 @@
 import sys
-from pathlib import Path
 
-# Add shared/ folder to Python path
-sys.path.append(str(Path(__file__).parent.parent / "shared"))
-
-from config import FILTERS
+from smard_pipeline.config import FILTERS
 from downloader import update_raw_data
 
 if __name__ == '__main__':

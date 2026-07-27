@@ -9,11 +9,8 @@ from rich.progress import track
 from rich.console import Console
 from rich.terminal_theme import MONOKAI
 
-# Add shared/ folder to Python path
-sys.path.append(str(Path(__file__).parent.parent / "shared"))
-
-from config import FILTERS, RAW_DATA_DIR, LOGS_DIR
-from smard_api import is_current_week, get_timestamps, get_smard_timeseries
+from smard_pipeline.config import FILTERS, RAW_DATA_DIR, LOGS_DIR
+from smard_pipeline.smard_api import is_current_week, get_timestamps, get_smard_timeseries
 
 # Use install from rich for a better output of tracebacks
 install()

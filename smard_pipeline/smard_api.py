@@ -3,7 +3,7 @@ import datetime
 import requests
 from typing import TypedDict
 
-from config import BASE_URL
+from smard_pipeline.config import BASE_URL
 
 # Define classes
 class MetaData(TypedDict):
