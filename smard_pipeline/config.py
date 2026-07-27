@@ -80,6 +80,13 @@ RESOLUTIONS: dict[str, str] = {
     'Jährlich': 'year'
 }
 
+PATH_DICT: dict[str, str] = {
+    'Stromerzeugung': 'power_generation',
+    'Stromverbrauch': 'power_consumption',
+    'Marktpreis': 'market_price',
+    'Prognostizierte Erzeugung': 'forecasted_generation'
+}
+
 ENERGY_CATEGORIES: dict[str, dict] = {
     # Active energies
     'Braunkohle': {
