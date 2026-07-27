@@ -69,3 +69,11 @@ def update_raw_data(category: str, subcategory: str) -> None:
     filter_id: int = FILTERS[category][subcategory]
     failed_downloads: list[int] = []
 
+    downloaded_timestamps: list[int] = [
+        int(x.name.split('.')[0].split('_')[1])
+        for x in OUTPUT_DIR.glob(f'*{filter_id}_*')
+    ]
+    if downloaded_timestamps and is_current_week(downloaded_timestamps[-1]):
+        downloaded_timestamps.pop()
+    
+    online_timestamps: list[int] = get_timestamps(filter_id)
