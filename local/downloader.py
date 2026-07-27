@@ -144,10 +144,22 @@ def update_raw_data(category: str, subcategory: str) -> None:
                 time.sleep(0.2)
 
         if counter < number:
-            # TODO Implement log messages for updating the progress.
-            pass
+            msg = f'[bold red]WARNING[/] Update was not successfull. There ' \
+                f'are {number-counter} files missing! [bold bright_red]✗[/]'
+            console_terminal.log(msg)
+            console_log.log(msg)
+            msg = '[bold bright_red]✗[/]   Missing timestamps are:'
+            console_terminal.log(msg)
+            console_log.log(msg)
+            for item in failed_downloads:
+                msg = f'  {item}'
+                console_terminal.log(msg)
+                console_log.log(msg)
         else:
-            pass
+            msg = f'[bold green]UPDATE COMPLETED![/] Historical files for ' \
+                f'{subcategory} are up to date. [bold green]✓[/]'
+            console_terminal.log(msg)
+            console_log.log(msg)
 
     # Save the logs.
     console_log.save_html(
