@@ -61,3 +61,12 @@ REGIONS: dict[str, str] = {
     'Regelzone (AT): APG': 'APG',
     'Regelzone (LU): Creos': 'Creos'
 }
+
+RESOLUTIONS: dict[str, str] = {
+    'Stündlich': 'hour',
+    'Viertelstündlich': 'quarterhour',
+    'Täglich': 'day',
+    'Wöchentlich': 'week',
+    'Monatlich': 'month',
+    'Jährlich': 'year'
+}
