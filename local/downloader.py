@@ -101,3 +101,24 @@ def update_raw_data(category: str, subcategory: str) -> None:
             console_log.log(msg)
         # Set counter variable for the missing files.
         counter = 0
+
+        # Do the download with a progress bar.
+        for timestamp in track(online_timestamps, description='[green] Processing...'):
+            # Check if the data of the curret timestamp are missing. 
+            if timestamp not in downloaded_timestamps:
+                # The timestamp of the current timestamp is missing.
+                # Start download. 
+                # TODO: Implement the download 
+                pass
+
+        if counter < number:
+            # TODO Implement log messages for updating the progress.
+            pass
+        else:
+            pass
+
+    # Save the logs.
+    console_log.save_html(
+        LOGS_DIR/f'log_{category}_{subcategory}.html',
+        theme=MONOKAI
+    )
