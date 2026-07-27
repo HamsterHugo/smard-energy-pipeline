@@ -1,0 +1,1 @@
+BASE_URL: str = "https://www.smard.de/app"
