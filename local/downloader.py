@@ -12,7 +12,7 @@ from rich.terminal_theme import MONOKAI
 # Add shared/ folder to Python path
 sys.path.append(str(Path(__file__).parent.parent / "shared"))
 
-from config import FILTERS
+from config import FILTERS, RAW_DATA_DIR, LOGS_DIR
 from smard_api import is_current_week, get_timestamps, get_smard_timeseries
 
 # Use install from rich for a better output of tracebacks
@@ -50,3 +50,22 @@ def update_raw_data(category: str, subcategory: str) -> None:
             f"{list(FILTERS[category].keys())}"
         )
         return
+
+    # Set paths for downloads and logs.
+    PATH_DICT: dict[str, str] = {
+            'Stromerzeugung': 'power_generation',
+            'Stromverbrauch': 'power_consumption',
+            'Marktpreis': 'market_price',
+            'Prognostizierte Erzeugung': 'forecasted_generation'
+    }
+    OUTPUT_DIR: Path = RAW_DATA_DIR / PATH_DICT[category]
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Set message variable for log messages.
+    msg: str = ''
+
+    # Set filter_id for API call and emtpy list for failed downloads.
+    filter_id: int = FILTERS[category][subcategory]
+    failed_downloads: list[int] = []
+
