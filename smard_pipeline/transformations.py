@@ -17,8 +17,9 @@ install()
 console = Console(record=True)
 
 def merge_raw_data(category: str, subcategory: str) -> None:
-    """Loads all raw_data for the queries category and subcategories and merges
-    all timeseries into one data frame. Saves the data frame as parquet file.
+    """Reads all raw weekly parquet files for the given category and
+    subcategory, merges them into a single time series and saves the
+    result as a parquet file.
 
     Args:
         category (str): Top level category from FILTERS.
@@ -44,21 +45,21 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         )
         return
 
-    INPUT_DIR: Path = RAW_DATA_DIR / PATH_DICT[category]
+    input_dir: Path = RAW_DATA_DIR / PATH_DICT[category]
     PREPROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
     filter_id: int = FILTERS[category][subcategory]
 
     weekly_blocks: list[pd.DataFrame] = [
         pd.read_parquet(file)
-        for file in INPUT_DIR.glob(f'{filter_id}_*.parquet')
+        for file in sorted(input_dir.glob(f'{filter_id}_*.parquet'))
     ]
 
     if not weekly_blocks:
         console.log(f"[yellow][WARNING][/] No files found for {subcategory}.")
         console.log(
-            f"[yellow][WARNING][/] You have to download " \
-                f"the data for {subcategory}."
+            f"[yellow][WARNING][/] You have to download "
+            f"the data for {subcategory}."
         )
     else:
         df: pd.DataFrame = pd.concat(weekly_blocks, ignore_index=True)
