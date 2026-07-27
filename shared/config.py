@@ -47,3 +47,17 @@ FILTERS: dict[str, dict[str, int]] = {
         'Gesamt': 122
     }
 }
+
+REGIONS: dict[str, str] = {
+    'Deutschland': 'DE',
+    'Österreich': 'AT',
+    'Luxemburg': 'LU',
+    'Marktgebiet: DE/LU (ab 01.10.2018)': 'DE-LU',
+    'Marktgebiet: DE/AT/LU (bis 30.09.2018)': 'DE-AT-LU',
+    'Regelzone (DE): 50Hertz': '50Hertz',
+    'Regelzone (DE): Amprion': 'Amprion',
+    'Regelzone (DE): TenneT': 'TenneT',
+    'Regelzone (DE): TransnetBW': 'TransnetBW',
+    'Regelzone (AT): APG': 'APG',
+    'Regelzone (LU): Creos': 'Creos'
+}
