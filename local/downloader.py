@@ -77,3 +77,15 @@ def update_raw_data(category: str, subcategory: str) -> None:
         downloaded_timestamps.pop()
     
     online_timestamps: list[int] = get_timestamps(filter_id)
+
+    if is_current_week(online_timestamps[-1]):
+        online_timestamps.pop()
+
+    if len(downloaded_timestamps) == len(online_timestamps):
+        msg = f'[cyan][INFO][/] Historical files for {subcategory} ' \
+        f'are up to date.'
+        console_terminal.log(msg)
+        console_log.log(msg)
+    else:
+        # TODO: Implement the download of missing files.
+        pass
