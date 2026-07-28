@@ -7,8 +7,8 @@ from rich.console import Console
 from rich.terminal_theme import MONOKAI
 
 from smard_pipeline.config import RAW_DATA_DIR, PREPROCESSED_DATA_DIR, LOGS_DIR
-from smard_pipeline.config import PATH_DICT
-from smard_pipeline.config import FILTERS
+from smard_pipeline.config import PATH_DICT, FILTERS, ENERGY_CATEGORIES
+from smard_pipeline.config import CONSUMPTION_CATEGORIES, PRICE_CATEGORIES
 
 # Use install from rich for a better output of tracebacks
 install()
@@ -79,5 +79,42 @@ def merge_all_categories() -> None:
     """Merges all preprocessed parquet files for active energy categories,
     consumption and market price into a single combined parquet file.
     """
-    # TODO: Implement fucntion body.
-    pass
+    df_list: list[pd.DataFrame] = []
+
+    for categories in [ENERGY_CATEGORIES, CONSUMPTION_CATEGORIES, PRICE_CATEGORIES]:
+        for name, config in categories.items():
+            if not config['active']:
+                continue
+
+            filter_id: int = config['filter_id']
+            file: Path = PREPROCESSED_DATA_DIR / f'{filter_id}_historical.parquet'
+
+            if not file.exists():
+                console.log(
+                    f"[yellow][WARNING][/] File not found for {name}, skipping..."
+                )
+                continue
+
+            df: pd.DataFrame = pd.read_parquet(file)
+            df_list.append(df)
+            console.log(f"[bold green][SUCCESS][/] Loaded {name}.")
+
+    if not df_list:
+        console.log(
+            f"[bold bright_red][ERROR][/] No preprocessed files found."
+        )
+    else:
+        combined_df: pd.DataFrame = df_list[0]
+        for df in df_list[1:]:
+            combined_df = pd.merge(combined_df, df, how='inner', on='timestamps')
+
+        output_path = PREPROCESSED_DATA_DIR / 'combined_historical.parquet'
+        combined_df.to_parquet(output_path)
+        console.log(
+            f"[bold green][SUCCESS][/] Combined file saved: {output_path}."
+        )
+
+    console.save_html(
+        LOGS_DIR/f'combined_log.html',
+        theme=MONOKAI
+    )
