@@ -81,7 +81,7 @@ def update_raw_data(category: str, subcategory: str) -> None:
         number: int = len(online_timestamps)-len(downloaded_timestamps)
         if number == 1:
             msg = f'[cyan][INFO][/] There is {number} file missing ' \
-                'for {subcategory}!'
+                f'for {subcategory}!'
             console_terminal.log(msg)
             console_log.log(msg)
         else:
