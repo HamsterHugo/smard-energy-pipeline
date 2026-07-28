@@ -8,7 +8,7 @@ from rich.terminal_theme import MONOKAI
 
 from smard_pipeline.config import RAW_DATA_DIR, PREPROCESSED_DATA_DIR, LOGS_DIR
 from smard_pipeline.config import PATH_DICT, FILTERS, ENERGY_CATEGORIES
-from smard_pipeline.config import CONSUMPTION_CATEGORIES, PRICE_CATEGORIES
+from smard_pipeline.config import CONSUMPTION_CATEGORIES
 
 # Use install from rich for a better output of tracebacks
 install()
@@ -97,7 +97,7 @@ def merge_all_categories() -> None:
     """
     df_list: list[pd.DataFrame] = []
 
-    for categories in [ENERGY_CATEGORIES, CONSUMPTION_CATEGORIES, PRICE_CATEGORIES]:
+    for categories in [ENERGY_CATEGORIES, CONSUMPTION_CATEGORIES]:
         for name, config in categories.items():
             if not config['active']:
                 continue
