@@ -1,22 +1,25 @@
 import sys
 
 from smard_pipeline.config import FILTERS
-from smard_pipeline.transformations import merge_raw_data
+from smard_pipeline.transformations import merge_raw_data, merge_all_categories
 
 if __name__ == '__main__':
-    if len(sys.argv) != 3:
-        print("Usage: python 02_preprocess_historical.py <category> <subcategory>")
-        print("Example: python 02_preprocess_historical.py Stromerzeugung Erdgas")
-        print("Example: python 02_preprocess_historical.py Stromverbrauch Residuallast")
-        print('For looping through all subcategories use:')
-        print('python 02_preprocess_historical.py <category> all')
-        sys.exit(1)
+    if len(sys.argv) == 2 and sys.argv[1] == 'combine':
+        merge_all_categories()
 
-    category = sys.argv[1]
-    subcategory = sys.argv[2]
+    elif len(sys.argv) == 3:
+        category = sys.argv[1]
+        subcategory = sys.argv[2]
 
-    if subcategory == 'all':
-        for current_subcategory in FILTERS[category]:
-            merge_raw_data(category, current_subcategory)
+        if subcategory == 'all':
+            for current_subcategory in FILTERS[category]:
+                merge_raw_data(category, current_subcategory)
+        else:
+            merge_raw_data(category, subcategory)
+
     else:
-        merge_raw_data(category, subcategory)
+        print("Usage:")
+        print("  python 02_preprocess_historical.py <category> <subcategory>")
+        print("  python 02_preprocess_historical.py <category> all")
+        print("  python 02_preprocess_historical.py combine")
+        sys.exit(1)
