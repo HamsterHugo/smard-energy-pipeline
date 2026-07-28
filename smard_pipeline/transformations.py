@@ -80,7 +80,7 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         df: pd.DataFrame = pd.concat(weekly_blocks, ignore_index=True)
         df.columns = ['timestamps', subcategory]
         df = df.dropna()
-        if CATEGORIES[category][subcategory]['convert_timestamps']:
+        if not CATEGORIES[category][subcategory]['include_in_table']:
             df['timestamps'] = convert_timestamp_column(df['timestamps'])
         console.log(f"[bold green][SUCCESS][/] Raw data for {subcategory} merged!")
         output_path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
@@ -100,7 +100,7 @@ def merge_all_categories() -> None:
 
     for category, subcategory in CATEGORIES.items():
         for name, config in subcategory.items():
-            if config['convert_timestamps']:
+            if not config['include_in_table']:
                 continue
 
             smard_id: int = config['id']

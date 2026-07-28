@@ -10,7 +10,7 @@ LOGS_DIR = DATA_DIR / "logs"
 # Define classes
 class TimeSeriesConfig(TypedDict):
     id: int
-    convert_timestamps: bool
+    include_in_table: bool
 
 class EnergyTimeSeriesConfig(TimeSeriesConfig):
     active: bool
@@ -23,73 +23,73 @@ CATEGORIES: dict[str, dict[str, TimeSeriesConfig | EnergyTimeSeriesConfig]] = {
     'Stromerzeugung': {
         'Braunkohle': EnergyTimeSeriesConfig(
             id=1223,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Kernenergie': EnergyTimeSeriesConfig(
             id=1224,
-            convert_timestamps=True,
+            include_in_table=False,
             active=False,
             deprecated_since="2023-04-16 0:00"
         ),
         'Wind Offshore': EnergyTimeSeriesConfig(
             id=1225,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Wasserkraft': EnergyTimeSeriesConfig(
             id=1226,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Sonstige Konventionelle': EnergyTimeSeriesConfig(
             id=1227,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Sonstige Erneuerbare': EnergyTimeSeriesConfig(
             id=1228,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Biomasse': EnergyTimeSeriesConfig(
             id=4066,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Wind Onshore': EnergyTimeSeriesConfig(
             id=4067,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Photovoltaik': EnergyTimeSeriesConfig(
             id=4068,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Steinkohle': EnergyTimeSeriesConfig(
             id=4069,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Pumpspeicher': EnergyTimeSeriesConfig(
             id=4070,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
         'Erdgas': EnergyTimeSeriesConfig(
             id=4071,
-            convert_timestamps=False,
+            include_in_table=True,
             active=True,
             deprecated_since=None
         ),
@@ -97,107 +97,107 @@ CATEGORIES: dict[str, dict[str, TimeSeriesConfig | EnergyTimeSeriesConfig]] = {
     'Stromverbrauch': {
         'Gesamt (Netzlast)': TimeSeriesConfig(
             id=410,
-            convert_timestamps=False
+            include_in_table=True
         ),
         'Residuallast': TimeSeriesConfig(
             id=4359,
-            convert_timestamps=False
+            include_in_table=True
         ),
         'Pumpspeicher': TimeSeriesConfig(
             id=4387,
-            convert_timestamps=True
+            include_in_table=False
         )
     },
     'Marktpreis': {
         'Deutschland-Luxemburg': TimeSeriesConfig(
             id=4169,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Anrainer DE-LU': TimeSeriesConfig(
             id=5078,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Belgien': TimeSeriesConfig(
             id=4996,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Norwegen 2': TimeSeriesConfig(
             id=4997,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Österreich': TimeSeriesConfig(
             id=4170,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Dänemark 1': TimeSeriesConfig(
             id=252,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Dänemark 2': TimeSeriesConfig(
             id=253,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Frankreich': TimeSeriesConfig(
             id=254,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Italien (Nord)': TimeSeriesConfig(
             id=255,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Niederlande': TimeSeriesConfig(
             id=256,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Polen 1': TimeSeriesConfig(
             id=257,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Polen 2': TimeSeriesConfig(
             id=258,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Schweiz': TimeSeriesConfig(
             id=259,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Slowenien': TimeSeriesConfig(
             id=260,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Tschechien': TimeSeriesConfig(
             id=261,
-            convert_timestamps=True
+            include_in_table=False
         ),
         'Ungarn': TimeSeriesConfig(
             id=262,
-            convert_timestamps=True
+            include_in_table=False
         )
     },
     'Prognostizierte Erzeugung': {
         'Offshore': TimeSeriesConfig(
             id=3791,
-            convert_timestamps=False
+            include_in_table=False
         ),
         'Onshore': TimeSeriesConfig(
             id=123,
-            convert_timestamps=False
+            include_in_table=False
         ),
         'Photovoltaik': TimeSeriesConfig(
             id=125,
-            convert_timestamps=False
+            include_in_table=False
         ),
         'Sonstige': TimeSeriesConfig(
             id=715,
-            convert_timestamps=False
+            include_in_table=False
         ),
         'Wind und Photovoltaik': TimeSeriesConfig(
             id=5097,
-            convert_timestamps=False
+            include_in_table=False
         ),
         'Gesamt': TimeSeriesConfig(
             id=122,
-            convert_timestamps=False
+            include_in_table=False
         )
     }
 }
