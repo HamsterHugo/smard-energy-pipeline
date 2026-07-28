@@ -74,3 +74,10 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         LOGS_DIR/f'merge_log_{category}_{subcategory}.html',
         theme=MONOKAI
     )
+
+def merge_all_categories() -> None:
+    """Merges all preprocessed parquet files for active energy categories,
+    consumption and market price into a single combined parquet file.
+    """
+    # TODO: Implement fucntion body.
+    pass
