@@ -31,7 +31,7 @@ def is_current_week(timestamp_ms: int) -> bool:
     return (now - block_start).days < 7
 
 def get_timestamps(
-        filter_id: int,
+        smard_id: int,
         region: str = "DE",
         resolution: str = "quarterhour",
         print_url: bool = False
@@ -43,7 +43,7 @@ def get_timestamps(
     time series via 'get_smard_timeseries'.
 
     Args:
-        filter_id (int): The SMARD filter ID of the requested data category
+        smard_id (int): The SMARD filter ID of the requested data category
             (e.g. 4068 for photovoltaics, 4067 for onshore wind).
         region (str): Region code. Defaults to "DE".
         resolution (str): Time resolution of the data. Available options:
@@ -63,13 +63,13 @@ def get_timestamps(
         >>> timestamps[0]
         1419807600000
     """
-    url: str = f"{BASE_URL}/chart_data/{filter_id}/{region}/index_{resolution}.json"
+    url: str = f"{BASE_URL}/chart_data/{smard_id}/{region}/index_{resolution}.json"
     if print_url: print(f'Fetching: {url}')
     
     return requests.get(url).json()['timestamps']
 
 def get_smard_timeseries(
-        filter_id: int,
+        smard_id: int,
         timestamp: int,
         region: str = "DE",
         resolution: str = "quarterhour",
@@ -82,10 +82,10 @@ def get_smard_timeseries(
     quarterhour resolution), starting on a Monday at 00:00 AM Europe/Berlin
     time. The first and last block may contain leading or trailing null values
     — the first block due to zero-padding before data availability, the last
-    block due to data latency of approximately one hour.
+    block due to data latency of approximately one hour and future timestamps.
 
     Args:
-        filter_id (int): The SMARD filter ID of the requested data category
+        smard_id (int): The SMARD filter ID of the requested data category
             (e.g. 4068 for photovoltaics, 4067 for onshore wind).
         timestamp (int): Unix timestamp in milliseconds marking the start of
             the requested weekly block (Monday at 00:00 AM Europe/Berlin).
@@ -118,8 +118,8 @@ def get_smard_timeseries(
         [1784498400000, 0.0]
     """
     url: str = (
-        f"{BASE_URL}/chart_data/{filter_id}/{region}/"
-        f"{filter_id}_{region}_{resolution}_{timestamp}.json"
+        f"{BASE_URL}/chart_data/{smard_id}/{region}/"
+        f"{smard_id}_{region}_{resolution}_{timestamp}.json"
     )
     if print_url: print(f'Fetching: {url}')
     
