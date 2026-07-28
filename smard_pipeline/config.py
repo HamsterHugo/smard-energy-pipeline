@@ -105,7 +105,7 @@ CATEGORIES: dict[str, dict[str, TimeSeriesConfig | EnergyTimeSeriesConfig]] = {
         ),
         'Pumpspeicher': TimeSeriesConfig(
             id=4387,
-            convert_timestamps=False
+            convert_timestamps=True
         )
     },
     'Marktpreis': {

@@ -7,8 +7,7 @@ from rich.console import Console
 from rich.terminal_theme import MONOKAI
 
 from smard_pipeline.config import RAW_DATA_DIR, PREPROCESSED_DATA_DIR, LOGS_DIR
-from smard_pipeline.config import PATH_DICT, FILTERS, ENERGY_CATEGORIES
-from smard_pipeline.config import CONSUMPTION_CATEGORIES
+from smard_pipeline.config import PATH_DICT, CATEGORIES
 
 # Use install from rich for a better output of tracebacks
 install()
@@ -42,33 +41,33 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         subcategory (str): Subcategory key within the category
     """
     # Check for valid arguments.
-    if category not in FILTERS:
+    if category not in CATEGORIES:
         console.log(
             f"[bold bright_red][ERROR][/] Unknown category: '{category}'"
         )
         console.log(
-            f"[cyan][INFO][/] Available categories: {list(FILTERS.keys())}"
+            f"[cyan][INFO][/] Available categories: {list(CATEGORIES.keys())}"
         )
         return
     
-    if subcategory not in FILTERS[category]:
+    if subcategory not in CATEGORIES[category]:
         console.log(
             f"[bold bright_red][ERROR][/] Unknown subcategory: '{subcategory}'"
         )
         console.log(
             f"[cyan][INFO][/] Available subcategories: "
-            f"{list(FILTERS[category].keys())}"
+            f"{list(CATEGORIES[category].keys())}"
         )
         return
 
     input_dir: Path = RAW_DATA_DIR / PATH_DICT[category]
     PREPROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
-    filter_id: int = FILTERS[category][subcategory]
+    smard_id: int = CATEGORIES[category][subcategory]['id']
 
     weekly_blocks: list[pd.DataFrame] = [
         pd.read_parquet(file)
-        for file in sorted(input_dir.glob(f'{filter_id}_*.parquet'))
+        for file in sorted(input_dir.glob(f'{smard_id}_*.parquet'))
     ]
 
     if not weekly_blocks:
@@ -81,8 +80,10 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         df: pd.DataFrame = pd.concat(weekly_blocks, ignore_index=True)
         df.columns = ['timestamps', subcategory]
         df = df.dropna()
+        if CATEGORIES[category][subcategory]['convert_timestamps']:
+            df['timestamps'] = convert_timestamp_column(df['timestamps'])
         console.log(f"[bold green][SUCCESS][/] Raw data for {subcategory} merged!")
-        output_path = PREPROCESSED_DATA_DIR / f'{filter_id}_historical.parquet'
+        output_path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
         df.to_parquet(output_path)
         console.log(f"[bold green][SUCCESS][/] File saved {output_path}.")
 
@@ -97,23 +98,24 @@ def merge_all_categories() -> None:
     """
     df_list: list[pd.DataFrame] = []
 
-    for categories in [ENERGY_CATEGORIES, CONSUMPTION_CATEGORIES]:
-        for name, config in categories.items():
-            if not config['active']:
+    for category, subcategory in CATEGORIES.items():
+        for name, config in subcategory.items():
+            if config['convert_timestamps']:
                 continue
 
-            filter_id: int = config['filter_id']
-            file: Path = PREPROCESSED_DATA_DIR / f'{filter_id}_historical.parquet'
+            smard_id: int = config['id']
+            file: Path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
 
             if not file.exists():
                 console.log(
-                    f"[yellow][WARNING][/] File not found for {name}, skipping..."
+                    f"[yellow][WARNING][/] File not found for {category}: "
+                    f"{name}, skipping..."
                 )
                 continue
 
             df: pd.DataFrame = pd.read_parquet(file)
             df_list.append(df)
-            console.log(f"[bold green][SUCCESS][/] Loaded {name}.")
+            console.log(f"[bold green][SUCCESS][/] Loaded {category}: {name}.")
 
     if not df_list:
         console.log(

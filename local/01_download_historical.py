@@ -1,6 +1,6 @@
 import sys
 
-from smard_pipeline.config import FILTERS
+from smard_pipeline.config import CATEGORIES
 from downloader import update_raw_data
 
 if __name__ == '__main__':
@@ -16,7 +16,7 @@ if __name__ == '__main__':
     subcategory = sys.argv[2]
 
     if subcategory == 'all':
-        for current_subcategory in FILTERS[category]:
+        for current_subcategory in CATEGORIES[category]:
             update_raw_data(category, current_subcategory)
     else:
         update_raw_data(category, subcategory)

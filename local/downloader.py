@@ -8,7 +8,7 @@ from rich.progress import track
 from rich.console import Console
 from rich.terminal_theme import MONOKAI
 
-from smard_pipeline.config import FILTERS, RAW_DATA_DIR, LOGS_DIR, PATH_DICT
+from smard_pipeline.config import CATEGORIES, RAW_DATA_DIR, LOGS_DIR, PATH_DICT
 from smard_pipeline.smard_api import is_current_week, get_timestamps, get_smard_timeseries
 
 # Use install from rich for a better output of tracebacks
@@ -28,22 +28,22 @@ def update_raw_data(category: str, subcategory: str) -> None:
             (e.g. 'Erdgas', 'Residuallast').
     """
     # Check for valid arguments.
-    if category not in FILTERS:
+    if category not in CATEGORIES:
         console_terminal.log(
             f"[bold bright_red][ERROR][/] Unknown category: '{category}'"
         )
         console_terminal.log(
-            f"[cyan][INFO][/] Available categories: {list(FILTERS.keys())}"
+            f"[cyan][INFO][/] Available categories: {list(CATEGORIES.keys())}"
         )
         return
     
-    if subcategory not in FILTERS[category]:
+    if subcategory not in CATEGORIES[category]:
         console_terminal.log(
             f"[bold bright_red][ERROR][/] Unknown subcategory: '{subcategory}'"
         )
         console_terminal.log(
             f"[cyan][INFO][/] Available subcategories: "
-            f"{list(FILTERS[category].keys())}"
+            f"{list(CATEGORIES[category].keys())}"
         )
         return
 
@@ -55,18 +55,18 @@ def update_raw_data(category: str, subcategory: str) -> None:
     # Set message variable for log messages.
     msg: str = ''
 
-    # Set filter_id for API call and emtpy list for failed downloads.
-    filter_id: int = FILTERS[category][subcategory]
+    # Set smard_id for API call and emtpy list for failed downloads.
+    smard_id: int = CATEGORIES[category][subcategory]['id']
     failed_downloads: list[int] = []
 
     downloaded_timestamps: list[int] = [
         int(x.name.split('.')[0].split('_')[1])
-        for x in OUTPUT_DIR.glob(f'*{filter_id}_*')
+        for x in OUTPUT_DIR.glob(f'{smard_id}_*')
     ]
     if downloaded_timestamps and is_current_week(downloaded_timestamps[-1]):
         downloaded_timestamps.pop()
     
-    online_timestamps: list[int] = get_timestamps(filter_id)
+    online_timestamps: list[int] = get_timestamps(smard_id)
 
     if is_current_week(online_timestamps[-1]):
         online_timestamps.pop()
@@ -98,12 +98,12 @@ def update_raw_data(category: str, subcategory: str) -> None:
             if timestamp not in downloaded_timestamps:
                 # The timestamp of the current timestamp is missing.
                 # Start the download. 
-                file_name = f'{filter_id}_{timestamp}.parquet'
+                file_name = f'{smard_id}_{timestamp}.parquet'
                 msg = f'[cyan][INFO][/] Missing file detected: {file_name}'
                 console_log.log(msg)
 
                 try:
-                    data = get_smard_timeseries(filter_id, timestamp)
+                    data = get_smard_timeseries(smard_id, timestamp)
                     df = pd.DataFrame(
                         data['series'],
                         columns=['timestamp', 'value_mwh']
