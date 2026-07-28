@@ -16,6 +16,22 @@ install()
 # Define consols, one for the terminal and one for the logs.
 console = Console(record=True)
 
+def convert_timestamp_column(
+        series: pd.Series,
+        timezone: str = 'Europe/Berlin'
+    ) -> pd.Series:
+    """Converts a Series of Unix timestamps in milliseconds to
+    timezone-aware datetimes.
+
+    Args:
+        series (pd.Series): Series with Unix timestamps in milliseconds.
+        timezone (str): Target timezone. Defaults to 'Europe/Berlin'.
+
+    Returns:
+        pd.Series: Series with timezone-aware datetime objects.
+    """
+    return pd.to_datetime(series, unit='ms', utc=True).dt.tz_convert(timezone)
+
 def merge_raw_data(category: str, subcategory: str) -> None:
     """Reads all raw weekly parquet files for the given category and
     subcategory, merges them into a single time series and saves the
@@ -108,6 +124,7 @@ def merge_all_categories() -> None:
         for df in df_list[1:]:
             combined_df = pd.merge(combined_df, df, how='inner', on='timestamps')
 
+        combined_df['timestamps'] = convert_timestamp_column(combined_df['timestamps'])
         output_path = PREPROCESSED_DATA_DIR / 'combined_historical.parquet'
         combined_df.to_parquet(output_path)
         console.log(
