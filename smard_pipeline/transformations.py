@@ -60,6 +60,7 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         )
         return
 
+    console.log(f"[cyan][INFO][/] Search data for {category}: {subcategory}...")
     input_dir: Path = RAW_DATA_DIR / PATH_DICT[category]
     PREPROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
@@ -77,6 +78,8 @@ def merge_raw_data(category: str, subcategory: str) -> None:
             f"the data for {subcategory}."
         )
     else:
+        console.log(f"[cyan][INFO][/] Found data for {len(weekly_blocks)} weeks.")
+        console.log(f"[cyan][INFO][/] Start merging...")
         df: pd.DataFrame = pd.concat(weekly_blocks, ignore_index=True)
         df.columns = ['timestamps', subcategory]
         df = df.dropna()
