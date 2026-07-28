@@ -151,3 +151,29 @@ ENERGY_CATEGORIES: dict[str, dict] = {
         'deprecated_since': "2023-04-16 0:00"
     },
 }
+
+CONSUMPTION_CATEGORIES: dict[str, dict] = {
+    'Gesamt (Netzlast)': {
+        'filter_id': 410,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Residuallast': {
+        'filter_id': 4359,
+        'active': True,
+        'deprecated_since': None
+    },
+    'Pumpspeicher': {
+        'filter_id': 4387,
+        'active': False,
+        'deprecated_since': None
+    }
+}
+
+PRICE_CATEGORIES: dict[str, dict] = {
+    'Deutschland-Luxemburg': {
+        'filter_id': 4169,
+        'active': True,
+        'deprecated_since': None
+    }
+}
