@@ -11,193 +11,203 @@ LOGS_DIR = DATA_DIR / "logs"
 class TimeSeriesConfig(TypedDict):
     id: int
     include_in_table: bool
-
-class EnergyTimeSeriesConfig(TimeSeriesConfig):
-    active: bool
-    deprecated_since: str | None
+    daily_download: bool
 
 # base url of the SMARD API.
 BASE_URL: str = "https://www.smard.de/app"
 
-CATEGORIES: dict[str, dict[str, TimeSeriesConfig | EnergyTimeSeriesConfig]] = {
+CATEGORIES: dict[str, dict[str, TimeSeriesConfig ]] = {
     'Stromerzeugung': {
-        'Braunkohle': EnergyTimeSeriesConfig(
+        'Braunkohle': TimeSeriesConfig(
             id=1223,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Kernenergie': EnergyTimeSeriesConfig(
+        'Kernenergie': TimeSeriesConfig(
             id=1224,
             include_in_table=False,
-            active=False,
-            deprecated_since="2023-04-16 0:00"
+            daily_download=False
         ),
-        'Wind Offshore': EnergyTimeSeriesConfig(
+        'Wind Offshore': TimeSeriesConfig(
             id=1225,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Wasserkraft': EnergyTimeSeriesConfig(
+        'Wasserkraft': TimeSeriesConfig(
             id=1226,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Sonstige Konventionelle': EnergyTimeSeriesConfig(
+        'Sonstige Konventionelle': TimeSeriesConfig(
             id=1227,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Sonstige Erneuerbare': EnergyTimeSeriesConfig(
+        'Sonstige Erneuerbare': TimeSeriesConfig(
             id=1228,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Biomasse': EnergyTimeSeriesConfig(
+        'Biomasse': TimeSeriesConfig(
             id=4066,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Wind Onshore': EnergyTimeSeriesConfig(
+        'Wind Onshore': TimeSeriesConfig(
             id=4067,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Photovoltaik': EnergyTimeSeriesConfig(
+        'Photovoltaik': TimeSeriesConfig(
             id=4068,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Steinkohle': EnergyTimeSeriesConfig(
+        'Steinkohle': TimeSeriesConfig(
             id=4069,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Pumpspeicher': EnergyTimeSeriesConfig(
+        'Pumpspeicher': TimeSeriesConfig(
             id=4070,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
-        'Erdgas': EnergyTimeSeriesConfig(
+        'Erdgas': TimeSeriesConfig(
             id=4071,
             include_in_table=True,
-            active=True,
-            deprecated_since=None
+            daily_download=True
         ),
     },
     'Stromverbrauch': {
         'Gesamt (Netzlast)': TimeSeriesConfig(
             id=410,
-            include_in_table=True
+            include_in_table=True,
+            daily_download=True
         ),
         'Residuallast': TimeSeriesConfig(
             id=4359,
-            include_in_table=True
+            include_in_table=True,
+            daily_download=True
         ),
         'Pumpspeicher': TimeSeriesConfig(
             id=4387,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         )
     },
     'Marktpreis': {
         'Deutschland-Luxemburg': TimeSeriesConfig(
             id=4169,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=True
         ),
         'Anrainer DE-LU': TimeSeriesConfig(
             id=5078,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Belgien': TimeSeriesConfig(
             id=4996,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Norwegen 2': TimeSeriesConfig(
             id=4997,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Österreich': TimeSeriesConfig(
             id=4170,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Dänemark 1': TimeSeriesConfig(
             id=252,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Dänemark 2': TimeSeriesConfig(
             id=253,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Frankreich': TimeSeriesConfig(
             id=254,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Italien (Nord)': TimeSeriesConfig(
             id=255,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Niederlande': TimeSeriesConfig(
             id=256,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Polen 1': TimeSeriesConfig(
             id=257,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Polen 2': TimeSeriesConfig(
             id=258,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Schweiz': TimeSeriesConfig(
             id=259,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Slowenien': TimeSeriesConfig(
             id=260,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Tschechien': TimeSeriesConfig(
             id=261,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Ungarn': TimeSeriesConfig(
             id=262,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         )
     },
     'Prognostizierte Erzeugung': {
         'Offshore': TimeSeriesConfig(
             id=3791,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Onshore': TimeSeriesConfig(
             id=123,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Photovoltaik': TimeSeriesConfig(
             id=125,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Sonstige': TimeSeriesConfig(
             id=715,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Wind und Photovoltaik': TimeSeriesConfig(
             id=5097,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         ),
         'Gesamt': TimeSeriesConfig(
             id=122,
-            include_in_table=False
+            include_in_table=False,
+            daily_download=False
         )
     }
 }
