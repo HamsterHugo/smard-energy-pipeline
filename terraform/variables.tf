@@ -6,5 +6,5 @@ variable "aws_region" {
 
 variable "owner" {
   description = "The name of the owner of the resource."
-  type = string
+  type        = string
 }
