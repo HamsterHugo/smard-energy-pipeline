@@ -6,6 +6,9 @@ DATA_DIR = ROOT_DIR / "data"
 RAW_DATA_DIR = DATA_DIR / "raw_data"
 PREPROCESSED_DATA_DIR = DATA_DIR / "preprocessed_data"
 LOGS_DIR = DATA_DIR / "logs"
+COMBINED_HISTORICAL: str = 'combined_historical.parquet'
+NUCLEAR_HISTORICAL: str = '1224_historical.parquet'
+MARKET_PRICE_HISTORICAL: str = '4169_historical.parquet'
 
 # Define classes
 class TimeSeriesConfig(TypedDict):
