@@ -17,6 +17,7 @@ install()
 # Define consols, one for the terminal and one for the logs.
 console_terminal = Console()
 console_log = Console(record=True, file=open(devnull, "w", encoding="utf-8"))
+console = Console(record=True)
 
 def update_raw_data(category: str, subcategory: str) -> None:
     """Downloads missing SMARD time series blocks for the given category.
@@ -167,4 +168,27 @@ def download_current_week(category: str, subcategory: str) -> None:
         subcategory (str): Subcategory key within the category
             (e.g. 'Erdgas', 'Residuallast').
     """
-    pass
+    # Check for valid arguments.
+    if category not in CATEGORIES:
+        console_terminal.log(
+            f"[bold bright_red][ERROR][/] Unknown category: '{category}'"
+        )
+        console_terminal.log(
+            f"[cyan][INFO][/] Available categories: {list(CATEGORIES.keys())}"
+        )
+        return
+    
+    if subcategory not in CATEGORIES[category]:
+        console_terminal.log(
+            f"[bold bright_red][ERROR][/] Unknown subcategory: '{subcategory}'"
+        )
+        console_terminal.log(
+            f"[cyan][INFO][/] Available subcategories: "
+            f"{list(CATEGORIES[category].keys())}"
+        )
+        return
+
+    # Set paths for downloads and logs.
+    OUTPUT_DIR: Path = RAW_DATA_DIR / 'current_week'
+    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    LOGS_DIR.mkdir(parents=True, exist_ok=True)
