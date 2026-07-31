@@ -156,3 +156,15 @@ def update_raw_data(category: str, subcategory: str) -> None:
         LOGS_DIR/f'log_{category}_{subcategory}.html',
         theme=MONOKAI
     )
+
+def download_current_week(category: str, subcategory: str) -> None:
+    """Downloads the time series block of the current week for the queried
+    category and subcategory.
+
+    Args:
+        category (str): Top-level category key from CATEGORIES
+            (e.g. 'Stromerzeugung', 'Stromverbrauch').
+        subcategory (str): Subcategory key within the category
+            (e.g. 'Erdgas', 'Residuallast').
+    """
+    pass
