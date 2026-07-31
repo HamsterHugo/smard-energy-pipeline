@@ -22,7 +22,7 @@ def update_raw_data(category: str, subcategory: str) -> None:
     """Downloads missing SMARD time series blocks for the given category.
 
     Args:
-        category (str): Top-level category key from FILTERS
+        category (str): Top-level category key from CATEGORIES
             (e.g. 'Stromerzeugung', 'Stromverbrauch').
         subcategory (str): Subcategory key within the category
             (e.g. 'Erdgas', 'Residuallast').
