@@ -192,3 +192,41 @@ def download_current_week(category: str, subcategory: str) -> None:
     OUTPUT_DIR: Path = RAW_DATA_DIR / 'current_week'
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Setting smard_id for API request.
+    smard_id: int = CATEGORIES[category][subcategory]['id']
+
+    timestamp: int = get_timestamps(smard_id)[-1]
+
+    if not is_current_week(timestamp):
+        console.log(
+            f'[bold yellow]WARNING[/] There are no current data for '
+            f'{category}: {subcategory}'
+        )
+    else:
+        console.log(
+            f'[bold cyan]INFO[/] Current data available for '
+            f'{category}: {subcategory}. Start downloading...'
+        )
+
+        file_name: str = f'{smard_id}_{timestamp}.parquet'
+        try:
+            data = get_smard_timeseries(smard_id, timestamp)
+            df = pd.DataFrame(
+                data['series'],
+                columns=['timestamp', 'value_mwh']
+            )
+            output_path = OUTPUT_DIR / file_name
+            df.to_parquet(output_path, index=False)
+            console.log(
+                f'[bold green]SUCCESS[/] {file_name} saved successfully! '
+                f'[bold green]✓[/]'
+            )
+        except Exception as error:
+            console.log(f'[bold bright_red]ERROR:[/] {error}')
+
+    # Save the logs.
+    console.save_html(
+        LOGS_DIR/f'log_current_{category}_{subcategory}.html',
+        theme=MONOKAI
+    )
