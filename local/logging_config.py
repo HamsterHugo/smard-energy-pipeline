@@ -1,4 +1,76 @@
 import logging
-#✗
+from typing import ClassVar
+
+from rich.console import Console
+from rich.logging import RichHandler
+from rich.text import Text
+from rich.theme import Theme
+from rich.terminal_theme import TerminalTheme
+
+from smard_pipeline.config import LOGS_DIR
+
+CUSTOM_THEME = TerminalTheme(
+    (12, 12, 12),
+    (217, 217, 217),
+    [
+        (26, 26, 26),
+        (244, 0, 95),
+        (152, 224, 36),
+        (255, 255, 0),
+        (0, 128, 255),
+        (244, 0, 95),
+        (88, 209, 235),
+        (196, 197, 181),
+        (98, 94, 76),
+    ],
+    [
+        (244, 0, 95),
+        (152, 224, 36),
+        (224, 213, 97),
+        (0, 128, 255),
+        (244, 0, 95),
+        (88, 209, 235),
+        (246, 246, 239),
+    ],
+)
+
+class StatusAwareRichHandler(RichHandler):
+    STATUS_ICONS: ClassVar[dict] = {
+        "success": "✔",
+        "complete": "★",
+        "fail": "✗"
+    }
+
+    def get_level_text(self, record: logging.LogRecord) -> Text:
+        status: str = getattr(record, "status", None)
+        if status in self.STATUS_ICONS:
+            label: str = status.upper().ljust(8)
+            return Text.styled(f"{label}", f"status.{status}")
+        return super().get_level_text(record)
+
+    def render_message(self, record: logging.LogRecord, message: str):
+        status: str = getattr(record, "status", None)
+        message_renderable = super().render_message(record, message)
+        if status in self.STATUS_ICONS:
+            icon: str = self.STATUS_ICONS[status]
+            message_renderable.append(f" {icon}", style=f"status.{status}")
+        return message_renderable
+
+custome_theme: Theme = Theme(
+    {
+        "status.success": "dark_green",
+        "status.complete": "bold green"
+    }
+)
+
+console: Console = Console(record=True, theme=custome_theme)
+
 def setup_logging(level: int = logging.DEBUG):
-    logging.basicConfig(level=level)
+    logging.basicConfig(
+        level=level,
+        format="%(message)s",
+        handlers=[StatusAwareRichHandler(console=console)]
+    )
+
+def save_log_to_html(file_name: str) -> None:
+    console.save_html(LOGS_DIR / f"{file_name}.html", theme=CUSTOM_THEME)

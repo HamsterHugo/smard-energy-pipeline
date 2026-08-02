@@ -4,7 +4,7 @@ import logging
 from downloader import update_raw_data, download_current_week
 from smard_pipeline.config import CATEGORIES
 from smard_pipeline.transformations import merge_raw_data, merge_all_categories
-from logging_config import setup_logging
+from logging_config import setup_logging, save_log_to_html
 
 usage: str = """
 USAGE:
@@ -51,4 +51,7 @@ if __name__ == '__main__':
             merge_all_categories()
         elif sys.argv[1] == 'current':
             print('TODO: Implement function')
+
+    #print(sys.argv)
+    save_log_to_html('_'.join(sys.argv[1:]))
 
