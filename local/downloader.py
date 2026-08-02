@@ -1,23 +1,14 @@
 import time
-from os import devnull
+import logging
 from pathlib import Path
 
 import pandas as pd
-from rich.traceback import install
 from rich.progress import track
-from rich.console import Console
-from rich.terminal_theme import MONOKAI
 
-from smard_pipeline.config import CATEGORIES, RAW_DATA_DIR, LOGS_DIR, PATH_DICT
+from smard_pipeline.config import CATEGORIES, RAW_DATA_DIR, PATH_DICT
 from smard_pipeline.smard_api import is_current_week, get_timestamps, get_smard_timeseries
 
-# Use install from rich for a better output of tracebacks
-install()
-
-# Define consols, one for the terminal and one for the logs.
-console_terminal = Console()
-console_log = Console(record=True, file=open(devnull, "w", encoding="utf-8"))
-console = Console(record=True)
+logger = logging.getLogger(__name__)
 
 def update_raw_data(category: str, subcategory: str) -> None:
     """Downloads missing SMARD time series blocks for the given category.
@@ -30,28 +21,18 @@ def update_raw_data(category: str, subcategory: str) -> None:
     """
     # Check for valid arguments.
     if category not in CATEGORIES:
-        console_terminal.log(
-            f"[bold bright_red][ERROR][/] Unknown category: '{category}'"
-        )
-        console_terminal.log(
-            f"[cyan][INFO][/] Available categories: {list(CATEGORIES.keys())}"
-        )
+        logger.error(f"Unkown category: '{category}'")
+        logger.info(f"Available categories: {list(CATEGORIES.keys())}")
         return
     
     if subcategory not in CATEGORIES[category]:
-        console_terminal.log(
-            f"[bold bright_red][ERROR][/] Unknown subcategory: '{subcategory}'"
-        )
-        console_terminal.log(
-            f"[cyan][INFO][/] Available subcategories: "
-            f"{list(CATEGORIES[category].keys())}"
-        )
+        logger.error(f"Unkown subcategory: '{subcategory}'")
+        logger.error(f"Available subcategories: '{list(CATEGORIES[category].keys())}'")
         return
 
     # Set paths for downloads and logs.
     OUTPUT_DIR: Path = RAW_DATA_DIR / PATH_DICT[category]
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
     # Set message variable for log messages.
     msg: str = ''
@@ -73,23 +54,14 @@ def update_raw_data(category: str, subcategory: str) -> None:
         online_timestamps.pop()
 
     if len(downloaded_timestamps) == len(online_timestamps):
-        msg = f'[cyan][INFO][/] Historical files for {subcategory} ' \
-        f'are up to date.'
-        console_terminal.log(msg)
-        console_log.log(msg)
+        logger.info(f"Historical files for {category}: {subcategory} are up to date.")
     else:
         # Find number of missing files.
         number: int = len(online_timestamps)-len(downloaded_timestamps)
         if number == 1:
-            msg = f'[cyan][INFO][/] There is {number} file missing ' \
-                f'for {subcategory}!'
-            console_terminal.log(msg)
-            console_log.log(msg)
+            logger.info(f"There is {number} file missing for {category}: {subcategory}.")
         else:
-            msg = f'[cyan][INFO][/] There are {number} files missing ' \
-                f'for {subcategory}!'
-            console_terminal.log(msg)
-            console_log.log(msg)
+            logger.info(f"There are {number} files missing for {category}: {subcategory}.")
         # Set counter variable for the missing files.
         counter = 0
 
@@ -100,8 +72,7 @@ def update_raw_data(category: str, subcategory: str) -> None:
                 # The timestamp of the current timestamp is missing.
                 # Start the download. 
                 file_name = f'{smard_id}_{timestamp}.parquet'
-                msg = f'[cyan][INFO][/] Missing file detected: {file_name}'
-                console_log.log(msg)
+                logger.info(f"Missing file detected: {file_name}", extra={"only_file": True})
 
                 try:
                     data = get_smard_timeseries(smard_id, timestamp)
@@ -112,51 +83,24 @@ def update_raw_data(category: str, subcategory: str) -> None:
                     output_path = OUTPUT_DIR / file_name
                     df.to_parquet(output_path, index=False)
                     counter += 1
-                    msg = f'[bold green][SUCCESS][/] {file_name} saved ' \
-                        f'successfully! [bold green]✓[/]'
-                    console_log.log(msg)
+                    logger.info(f"File {file_name} saved.", extra={"status": "success", "only_file": True})
                     if counter < number:
-                        msg = f'[cyan][INFO][/] {counter}/{number} updated!'
-                        console_log.log(msg)
+                        logger.info(f"Update: {counter}/{number}", extra={"only_file": True})
                     else:
-                        msg = f'[bold green][COMPLETED][/] ' \
-                            f'{counter}/{number} updated!'
-                        console_log.log(msg)
-                except Exception as Error:
+                        logger.info(f"Update: {counter}/{number}", extra={"only_file": True})
+                except Exception as error:
                     failed_downloads.append(timestamp)
-                    console_log.print_exception()
-                    msg = f'[bold bright_red][FAILURE][/] Download for Energy ' \
-                        f'data for timestamp {timestamp} for {subcategory} ' \
-                        f'failed! [bold bright_red]✗[/]'
-                    console_log.log()
-                    msg = f'[bold bright_red]ERROR:[/] {Error}'
-                    console_log.log(msg)
+                    logger.error(f"Download for {category}: {subcategory} at timestamp {timestamp} failed!", exc_info=error, extra={"only_file": True})
                 # Small time out for API request.
                 time.sleep(0.2)
 
         if counter < number:
-            msg = f'[bold red]WARNING[/] Update was not successfull. There ' \
-                f'are {number-counter} files missing! [bold bright_red]✗[/]'
-            console_terminal.log(msg)
-            console_log.log(msg)
-            msg = '[bold bright_red]✗[/]   Missing timestamps are:'
-            console_terminal.log(msg)
-            console_log.log(msg)
+            logger.info(f"Update was not successfull. There are {number-counter} files missing!", extra={"status": "fail"})
+            logger.info("Missing timestamps are:")
             for item in failed_downloads:
-                msg = f'  {item}'
-                console_terminal.log(msg)
-                console_log.log(msg)
+                logger.info(f"    {item}")
         else:
-            msg = f'[bold green]UPDATE COMPLETED![/] Historical files for ' \
-                f'{subcategory} are up to date. [bold green]✓[/]'
-            console_terminal.log(msg)
-            console_log.log(msg)
-
-    # Save the logs.
-    console_log.save_html(
-        LOGS_DIR/f'log_{category}_{subcategory}.html',
-        theme=MONOKAI
-    )
+            logger.info(f"Historical files for {category}: {subcategory} are now up to date!", extra={"status": "complete"})
 
 def download_current_week(category: str, subcategory: str) -> None:
     """Downloads the time series block of the current week for the queried
@@ -170,28 +114,18 @@ def download_current_week(category: str, subcategory: str) -> None:
     """
     # Check for valid arguments.
     if category not in CATEGORIES:
-        console_terminal.log(
-            f"[bold bright_red][ERROR][/] Unknown category: '{category}'"
-        )
-        console_terminal.log(
-            f"[cyan][INFO][/] Available categories: {list(CATEGORIES.keys())}"
-        )
+        logger.error(f"Unkown category: '{category}'")
+        logger.error(f"Available categories: '{list(CATEGORIES.keys())}'")
         return
     
     if subcategory not in CATEGORIES[category]:
-        console_terminal.log(
-            f"[bold bright_red][ERROR][/] Unknown subcategory: '{subcategory}'"
-        )
-        console_terminal.log(
-            f"[cyan][INFO][/] Available subcategories: "
-            f"{list(CATEGORIES[category].keys())}"
-        )
+        logger.error(f"Unkown subcategory: '{subcategory}'")
+        logger.error(f"Available subcategories: '{list(CATEGORIES[category].keys())}'")
         return
 
     # Set paths for downloads and logs.
     OUTPUT_DIR: Path = RAW_DATA_DIR / 'current_week'
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
     # Setting smard_id for API request.
     smard_id: int = CATEGORIES[category][subcategory]['id']
@@ -199,15 +133,10 @@ def download_current_week(category: str, subcategory: str) -> None:
     timestamp: int = get_timestamps(smard_id)[-1]
 
     if not is_current_week(timestamp):
-        console.log(
-            f'[bold yellow]WARNING[/] There are no current data for '
-            f'{category}: {subcategory}'
-        )
+        logger.warning(f"There are nor current data for {category}: {subcategory}")
     else:
-        console.log(
-            f'[bold cyan]INFO[/] Current data available for '
-            f'{category}: {subcategory}. Start downloading...'
-        )
+        logger.info(f'Current data available for {category}: {subcategory}.')
+        logger.info('Start downloading...')
 
         file_name: str = f'{smard_id}_{timestamp}.parquet'
         try:
@@ -218,15 +147,6 @@ def download_current_week(category: str, subcategory: str) -> None:
             )
             output_path = OUTPUT_DIR / file_name
             df.to_parquet(output_path, index=False)
-            console.log(
-                f'[bold green]SUCCESS[/] {file_name} saved successfully! '
-                f'[bold green]✓[/]'
-            )
+            logger.info(f'Saved file: {file_name}.')
         except Exception as error:
-            console.log(f'[bold bright_red]ERROR:[/] {error}')
-
-    # Save the logs.
-    console.save_html(
-        LOGS_DIR/f'log_current_{category}_{subcategory}.html',
-        theme=MONOKAI
-    )
+            logger.critical(error, exc_info=error)

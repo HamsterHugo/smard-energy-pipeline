@@ -1,8 +1,10 @@
 import sys
+import logging
 
 from downloader import update_raw_data, download_current_week
 from smard_pipeline.config import CATEGORIES
 from smard_pipeline.transformations import merge_raw_data, merge_all_categories
+from logging_config import setup_logging
 
 usage: str = """
 USAGE:
@@ -22,6 +24,8 @@ functions = {
     'current': download_current_week
 }
 
+setup_logging(level=logging.INFO)
+
 if __name__ == '__main__':
     if (len(sys.argv) not in [3,4]
         or sys.argv[1] not in functions
@@ -29,6 +33,8 @@ if __name__ == '__main__':
             and sys.argv[1] not in ['historical', 'current'])):
         print(usage)
         sys.exit(1)
+
+    logger = logging.getLogger(__name__)
 
     if len(sys.argv) == 4:
         category: str = sys.argv[2]

@@ -1,4 +1,5 @@
 import datetime
+import logging
 
 import requests
 from typing import TypedDict
@@ -13,6 +14,8 @@ class MetaData(TypedDict):
 class SmardBlock(TypedDict):
     meta_data: MetaData
     series: list[list[int | float | None]]
+
+logger = logging.getLogger(__name__)
 
 def is_current_week(timestamp_ms: int) -> bool:
     """Returns True if the given timestamp falls within the current week.
@@ -34,7 +37,6 @@ def get_timestamps(
         smard_id: int,
         region: str = "DE",
         resolution: str = "quarterhour",
-        print_url: bool = False
     ) -> list[int]:
     """Returns the list of valid block timestamps for the given SMARD filter.
 
@@ -49,8 +51,6 @@ def get_timestamps(
         resolution (str): Time resolution of the data. Available options:
             "quarterhour", "hour", "day", "week", "month", "year".
             Defaults to "quarterhour".
-        print_url (bool): If True, prints the request URL for debugging.
-            Defaults to False.
 
     Returns:
         list[int]: List of valid timestamps in milliseconds (Unix time).
@@ -64,7 +64,7 @@ def get_timestamps(
         1419807600000
     """
     url: str = f"{BASE_URL}/chart_data/{smard_id}/{region}/index_{resolution}.json"
-    if print_url: print(f'Fetching: {url}')
+    logger.debug(f"Fetching: {url}")
     
     return requests.get(url).json()['timestamps']
 
@@ -73,7 +73,6 @@ def get_smard_timeseries(
         timestamp: int,
         region: str = "DE",
         resolution: str = "quarterhour",
-        print_url: bool = False
     ) -> SmardBlock:
     """Returns a weekly data block from the SMARD API for the given filter and
     timestamp.
@@ -94,8 +93,6 @@ def get_smard_timeseries(
         resolution (str): Time resolution of the data. Available options:
             "quarterhour", "hour", "day", "week", "month", "year".
             Defaults to "quarterhour".
-        print_url (bool): If True, prints the request URL for debugging.
-            Defaults to False.
 
     Returns:
         dict: A weekly data block with two keys:
@@ -121,6 +118,6 @@ def get_smard_timeseries(
         f"{BASE_URL}/chart_data/{smard_id}/{region}/"
         f"{smard_id}_{region}_{resolution}_{timestamp}.json"
     )
-    if print_url: print(f'Fetching: {url}')
+    logger.debug(f"Fetching: {url}")
     
     return requests.get(url).json()

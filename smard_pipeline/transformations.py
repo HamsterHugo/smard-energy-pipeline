@@ -1,19 +1,12 @@
-from os import devnull
+import logging
 from pathlib import Path
 
 import pandas as pd
-from rich.traceback import install
-from rich.console import Console
-from rich.terminal_theme import MONOKAI
 
 from smard_pipeline.config import RAW_DATA_DIR, PREPROCESSED_DATA_DIR, LOGS_DIR
 from smard_pipeline.config import PATH_DICT, CATEGORIES
 
-# Use install from rich for a better output of tracebacks
-install()
-
-# Define consols, one for the terminal and one for the logs.
-console = Console(record=True)
+logger = logging.getLogger(__name__)
 
 def convert_timestamp_column(
         series: pd.Series,
@@ -42,28 +35,18 @@ def merge_raw_data(category: str, subcategory: str) -> None:
     """
     # Check for valid arguments.
     if category not in CATEGORIES:
-        console.log(
-            f"[bold bright_red][ERROR][/] Unknown category: '{category}'"
-        )
-        console.log(
-            f"[cyan][INFO][/] Available categories: {list(CATEGORIES.keys())}"
-        )
+        logger.error(f"Unkown category: '{category}'")
+        logger.info(f"Available categories: {list(CATEGORIES.keys())}")
         return
     
     if subcategory not in CATEGORIES[category]:
-        console.log(
-            f"[bold bright_red][ERROR][/] Unknown subcategory: '{subcategory}'"
-        )
-        console.log(
-            f"[cyan][INFO][/] Available subcategories: "
-            f"{list(CATEGORIES[category].keys())}"
-        )
+        logger.error(f"Unkown subcategory: '{subcategory}'")
+        logger.error(f"Available subcategories: '{list(CATEGORIES[category].keys())}'")
         return
 
-    console.log(f"[cyan][INFO][/] Search data for {category}: {subcategory}...")
+    logger.info(f"Search data for {category}: {subcategory}...")
     input_dir: Path = RAW_DATA_DIR / PATH_DICT[category]
     PREPROCESSED_DATA_DIR.mkdir(parents=True, exist_ok=True)
-    LOGS_DIR.mkdir(parents=True, exist_ok=True)
     smard_id: int = CATEGORIES[category][subcategory]['id']
 
     weekly_blocks: list[pd.DataFrame] = [
@@ -72,28 +55,20 @@ def merge_raw_data(category: str, subcategory: str) -> None:
     ]
 
     if not weekly_blocks:
-        console.log(f"[yellow][WARNING][/] No files found for {subcategory}.")
-        console.log(
-            f"[yellow][WARNING][/] You have to download "
-            f"the data for {subcategory}."
-        )
+        logger.error(f"No files found for {category}: {subcategory}.")
+        logger.warning(f"You have to download the data for {category}: {subcategory}")
     else:
-        console.log(f"[cyan][INFO][/] Found data for {len(weekly_blocks)} weeks.")
-        console.log(f"[cyan][INFO][/] Start merging...")
+        logger.info(f"Found data for {len(weekly_blocks)} weeks.")
+        logger.info(f"Start merging...")
         df: pd.DataFrame = pd.concat(weekly_blocks, ignore_index=True)
         df.columns = ['timestamps', subcategory]
         df = df.dropna()
         if not CATEGORIES[category][subcategory]['include_in_table']:
             df['timestamps'] = convert_timestamp_column(df['timestamps'])
-        console.log(f"[bold green][SUCCESS][/] Raw data for {subcategory} merged!")
+        logger.info(f"Raw data for {category}: {subcategory} merged!", extra={"status": "success"})
         output_path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
         df.to_parquet(output_path)
-        console.log(f"[bold green][SUCCESS][/] File saved {output_path}.")
-
-    console.save_html(
-        LOGS_DIR/f'merge_log_{category}_{subcategory}.html',
-        theme=MONOKAI
-    )
+        logger.info(f"File saved {output_path}.", extra={"status": "success"})
 
 def merge_all_categories() -> None:
     """Merges all preprocessed parquet files for active energy categories,
@@ -110,20 +85,17 @@ def merge_all_categories() -> None:
             file: Path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
 
             if not file.exists():
-                console.log(
-                    f"[yellow][WARNING][/] File not found for {category}: "
-                    f"{name}, skipping..."
+                logger.warning(
+                    f"File not found for {category}: {name}, skipping..."
                 )
                 continue
 
             df: pd.DataFrame = pd.read_parquet(file)
             df_list.append(df)
-            console.log(f"[bold green][SUCCESS][/] Loaded {category}: {name}.")
+            logger.info(f"Loaded {category}: {name}.", extra={"status": "success"})
 
     if not df_list:
-        console.log(
-            f"[bold bright_red][ERROR][/] No preprocessed files found."
-        )
+        logger.error("No preprocessed files found.")
     else:
         combined_df: pd.DataFrame = df_list[0]
         for df in df_list[1:]:
@@ -132,11 +104,4 @@ def merge_all_categories() -> None:
         combined_df['timestamps'] = convert_timestamp_column(combined_df['timestamps'])
         output_path = PREPROCESSED_DATA_DIR / 'combined_historical.parquet'
         combined_df.to_parquet(output_path)
-        console.log(
-            f"[bold green][SUCCESS][/] Combined file saved: {output_path}."
-        )
-
-    console.save_html(
-        LOGS_DIR/f'combined_log.html',
-        theme=MONOKAI
-    )
+        logger.info(f"Combined file saved: {output_path}.", extra={"status": "success"})
