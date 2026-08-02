@@ -3,7 +3,6 @@ import logging
 from pathlib import Path
 
 import pandas as pd
-from rich.progress import track
 
 from smard_pipeline.config import CATEGORIES, RAW_DATA_DIR, PATH_DICT
 from smard_pipeline.smard_api import is_current_week, get_timestamps, get_smard_timeseries
@@ -66,13 +65,13 @@ def update_raw_data(category: str, subcategory: str) -> None:
         counter = 0
 
         # Do the download with a progress bar.
-        for timestamp in track(online_timestamps, description='[green] Processing...'):
+        for timestamp in online_timestamps:
             # Check if the data of the curret timestamp are missing. 
             if timestamp not in downloaded_timestamps:
                 # The timestamp of the current timestamp is missing.
                 # Start the download. 
                 file_name = f'{smard_id}_{timestamp}.parquet'
-                logger.info(f"Missing file detected: {file_name}", extra={"only_file": True})
+                logger.info(f"Missing file detected: {file_name}")
 
                 try:
                     data = get_smard_timeseries(smard_id, timestamp)
@@ -83,14 +82,14 @@ def update_raw_data(category: str, subcategory: str) -> None:
                     output_path = OUTPUT_DIR / file_name
                     df.to_parquet(output_path, index=False)
                     counter += 1
-                    logger.info(f"File {file_name} saved.", extra={"status": "success", "only_file": True})
+                    logger.info(f"File {file_name} saved.", extra={"status": "success"})
                     if counter < number:
-                        logger.info(f"Update: {counter}/{number}", extra={"only_file": True})
+                        logger.info(f"Update: {counter}/{number}")
                     else:
-                        logger.info(f"Update: {counter}/{number}", extra={"only_file": True})
+                        logger.info(f"Update: {counter}/{number}")
                 except Exception as error:
                     failed_downloads.append(timestamp)
-                    logger.error(f"Download for {category}: {subcategory} at timestamp {timestamp} failed!", exc_info=error, extra={"only_file": True})
+                    logger.error(f"Download for {category}: {subcategory} at timestamp {timestamp} failed!", exc_info=error)
                 # Small time out for API request.
                 time.sleep(0.2)
 
