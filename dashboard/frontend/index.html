@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,67 @@
     <link rel="stylesheet" href="style.css">
 </head>
 
-    <body>
-        
-        <script src="script.js"></script>
-    </body>
+<body>
+
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
+
+    <header>
+        <h1>German Energy Market Dashboard</h1>
+        <p class="subtitle">Data source: Federal Network Agency SMARD</p>
+    </header>
+
+    <div class="controls">
+        <label>From</label>
+        <input type="date" id="date-from">
+        <label>To</label>
+        <input type="date" id="date-to">
+        <button onclick="loadData()">Apply</button>
+        <button onclick="setLastDays(7)">Last 7 days</button>
+        <button onclick="setLastDays(30)">Last 30 days</button>
+        <button onclick="setLastDays(365)">Last year</button>
+    </div>
+
+    <div class="metrics">
+        <div class="metric-card">
+            <div class="metric-label">Total Generation</div>
+            <div class="metric-value" id="metric-generation">—</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Renewables Share</div>
+            <div class="metric-value" id="metric-renewables">—</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Avg. Price</div>
+            <div class="metric-value" id="metric-price">—</div>
+        </div>
+        <div class="metric-card">
+            <div class="metric-label">Total Consumption</div>
+            <div class="metric-value" id="metric-consumption">—</div>
+        </div>
+    </div>
+
+    <div class="charts">
+        <div class="chart-card">
+            <div class="chart-title">Generation Mix by Source</div>
+            <div id="chart-mix"></div>
+        </div>
+
+        <div class="charts-row">
+            <div class="chart-card">
+                <div class="chart-title">Generation vs. Consumption</div>
+                <div id="chart-balance"></div>
+            </div>
+            <div class="chart-card">
+                <div class="chart-title">Market Price (€/MWh)</div>
+                <div id="chart-price"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
 </html>
