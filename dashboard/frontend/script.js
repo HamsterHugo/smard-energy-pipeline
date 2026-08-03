@@ -51,3 +51,19 @@ const LAYOUT_BASE = {
         rangeslider: { visible: false }
     }
 };
+
+// On loading: Set the last 7 days.
+window.onload = function () {
+    setLastDays(7);
+};
+
+function setLastDays(days) {
+    const to = new Date();
+    const from = new Date();
+    from.setDate(from.getDate() - days);
+
+    document.getElementById('date-to').value = to.toISOString().split('T')[0];
+    document.getElementById('date-from').value = from.toISOString().split('T')[0];
+
+    loadData();
+}
