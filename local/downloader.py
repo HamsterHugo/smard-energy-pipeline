@@ -146,6 +146,6 @@ def download_current_week(category: str, subcategory: str) -> None:
             )
             output_path = OUTPUT_DIR / file_name
             df.to_parquet(output_path, index=False)
-            logger.info(f'Saved file: {file_name}.', extra={"status": "success"})
+            logger.info(f"File saved: {file_name}.", extra={"status": "success"})
         except Exception as error:
             logger.critical(error, exc_info=error)
