@@ -69,43 +69,7 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         logger.info(f"Raw data for {category}: {subcategory} merged!", extra={"status": "success"})
         output_path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
         df.to_parquet(output_path)
-        logger.info(f"File saved {output_path}.", extra={"status": "success"})
-
-def merge_all_categories() -> None:
-    """Merges all preprocessed parquet files for active energy categories,
-    consumption and market price into a single combined parquet file.
-    """
-    df_list: list[pd.DataFrame] = []
-
-    for category, subcategory in CATEGORIES.items():
-        for name, config in subcategory.items():
-            if not config['include_in_table']:
-                continue
-
-            smard_id: int = config['id']
-            file: Path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
-
-            if not file.exists():
-                logger.warning(
-                    f"File not found for {category}: {name}, skipping..."
-                )
-                continue
-
-            df: pd.DataFrame = pd.read_parquet(file)
-            df_list.append(df)
-            logger.info(f"Loaded {category}: {name}.", extra={"status": "success"})
-
-    if not df_list:
-        logger.error("No preprocessed files found.")
-    else:
-        combined_df: pd.DataFrame = df_list[0]
-        for df in df_list[1:]:
-            combined_df = pd.merge(combined_df, df, how='inner', on='timestamps')
-
-        combined_df['timestamps'] = convert_timestamp_column(combined_df['timestamps'])
-        output_path = PREPROCESSED_DATA_DIR / 'combined_historical.parquet'
-        combined_df.to_parquet(output_path)
-        logger.info(f"Combined file saved: {output_path}.", extra={"status": "success"})
+        logger.info(f"File saved: {output_path.name}.", extra={"status": "success"})
 
 def get_current_timestamp() -> int:
     """Computes the timestamp of the last monday at 00:00 AM for the smard API.
@@ -120,11 +84,23 @@ def get_current_timestamp() -> int:
 
     return int(last_monday.timestamp()*1000)
 
-def combine_current_week() -> None:
-    df_list: list[pd.DataFrame] = []
-    current_timestamp = get_current_timestamp()
-    counter: int = 0
+def combine_data(data_type: str) -> None:
+    """Takes all historical or current timeseries and combines it into one data
+    frame and saves it as a parquet file.
+
+    NOTICE: All needed files have to be there. For the historical data you have
+    to merge alls week blocks to one time series. After that you can apply this
+    function for merging. For the data of the current week you have to download
+    them first.
+
+    Args:
+        data_type (str): Has to be either 'current' or 'historical'.
+    """
+    df_list: list = []
     missing_files: list = []
+    counter: int = 0
+    if data_type == 'current':
+        current_timestamp = get_current_timestamp()
 
     for category, subcategory in CATEGORIES.items():
         for name, config in subcategory.items():
@@ -132,21 +108,27 @@ def combine_current_week() -> None:
                 continue
 
             smard_id: int = config['id']
-            file: Path = RAW_DATA_DIR / "current_week" / f"{smard_id}_{current_timestamp}.parquet"
+            if data_type == 'historical':
+                file: Path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
+            else:
+                file: Path = RAW_DATA_DIR / "current_week" / f"{smard_id}_{current_timestamp}.parquet"
             counter += 1
 
             if not file.exists():
-                logger.warning(f"File {file.name} not found. You have to download the current data for {category}: {name}.")
+                logger.warning(
+                    f"File {file.name} not found. You have to "
+                    f"{'merge' if data_type == 'historical' else 'download'} "
+                    f"the {data_type} data for {category}: {name}.")
                 missing_files.append((category, name))
                 continue
 
             df: pd.DataFrame = pd.read_parquet(file)
-            df.columns = ('timestamps', name)
+            if data_type == 'current': df.columns = ('timestamps', name)
             df_list.append(df)
-            logger.info(f"Found file for {category}: {name}.")
+            logger.info(f'File found for {category}: {name} - {file.name}', extra={"status": "success"})
 
     if not df_list:
-        logger.error("No current data files found. You have to download them.")
+        logger.error(f"No data found. You have to {'merge' if data_type == 'historical' else 'download'} it.")
     elif (l:=len(df_list)) < counter:
         logger.error(f"There are {counter-l} files missing, namely:")
         for category, subcategory in missing_files:
@@ -157,6 +139,6 @@ def combine_current_week() -> None:
             combined_df = pd.merge(combined_df, df, how='inner', on='timestamps')
 
         combined_df['timestamps'] = convert_timestamp_column(combined_df['timestamps'])
-        output_path = PREPROCESSED_DATA_DIR / 'combined_current.parquet'
+        output_path = PREPROCESSED_DATA_DIR / f'combined_{data_type}.parquet'
         combined_df.to_parquet(output_path)
-        logger.info(f"Combined file saved: {output_path}.", extra={"status": "success"})
+        logger.info(f"Combined file saved: {output_path.name}.", extra={"status": "complete"})

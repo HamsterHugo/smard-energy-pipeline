@@ -3,7 +3,7 @@ import logging
 
 from downloader import update_raw_data, download_current_week
 from smard_pipeline.config import CATEGORIES
-from smard_pipeline.transformations import merge_raw_data, merge_all_categories, combine_current_week
+from smard_pipeline.transformations import merge_raw_data, combine_data
 from logging_config import setup_logging, save_log_to_html
 
 usage: str = """
@@ -47,10 +47,7 @@ if __name__ == '__main__':
         else:
             f(category, subcategory)
     else:
-        if sys.argv[1] == 'historical':
-            merge_all_categories()
-        elif sys.argv[1] == 'current':
-            combine_current_week()
+        combine_data(sys.argv[1])
 
     save_log_to_html('_'.join(sys.argv[1:]))
 
