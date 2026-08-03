@@ -2,7 +2,7 @@ from pathlib import Path
 import datetime
 
 import duckdb
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, send_file
 from flask_cors import CORS
 
 app = Flask(__name__)
@@ -14,8 +14,10 @@ POWER_GENERATION_PATH: Path = DATA_PATH / 'combined_historical.parquet'
 PRICE_PATH: Path = DATA_PATH / '4169_historical.parquet'
 NUCLEAR_PATH: Path = DATA_PATH / '1224_historical.parquet'
 
-TODAY: str = str(datetime.datetime.now().date())
-LAST_WEEK: str = str((TODAY-datetime.timedelta(days=7)).date())
+x = datetime.datetime.now()
+y = x - datetime.timedelta(days=7)
+TODAY: str = str(x.date())
+LAST_WEEK: str = str(y.date())
 
 def query_parquet(path: Path, date_from: str, date_to: str) -> list:
     con = duckdb.connect()
@@ -45,6 +47,14 @@ def get_nuclear():
     date_from = request.args.get('from', '2023-04-01')
     date_to = request.args.get('to', '2023-04-15')
     return jsonify(query_parquet(NUCLEAR_PATH, date_from, date_to))
+
+@app.route('/')
+def index():
+    return send_file(Path(__file__).parent.parent / 'frontend' / 'index.html')
+
+@app.route('/<path:filename>')
+def static_files(filename):
+    return send_file(Path(__file__).parent.parent / 'frontend' / filename)
 
 if __name__ == '__main__':
     app.run(debug=True)

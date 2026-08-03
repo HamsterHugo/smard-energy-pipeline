@@ -1,5 +1,6 @@
 const isLocal = window.location.hostname === 'localhost' ||
-                window.location.hostname === '127.0.0.1';
+                window.location.hostname === '127.0.0.1' ||
+                window.location.hostname === '';
 
 const API_URL = isLocal
     ? 'http://localhost:5000'
@@ -205,7 +206,7 @@ function renderCharts(data, priceData, nuclearData = []) {
         return {
             x: xValues,
             y: values,
-            name: ENGLISCH_MAPPING[source.key],
+            name: ENGLISH_MAPPING[source.key],
             type: 'scatter',
             mode: 'lines',
             stackgroup: 'one',
