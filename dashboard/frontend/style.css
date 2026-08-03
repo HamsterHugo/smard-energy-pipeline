@@ -64,11 +64,19 @@ h1 {
     background-color: #185a9d;
 }
 
+.metrics-container {
+    display: flex;
+    align-items: center;
+    padding: 24px 40px;
+    gap: 16px;
+}
+
 .metrics {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
-    padding: 24px 40px;
+    flex: 1;
+    padding: 0;
 }
 
 .metric-card {
@@ -113,6 +121,40 @@ h1 {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 24px;
+}
+
+.chart-toggle {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    min-width: 80px;
+}
+
+.toggle-label {
+    font-size: 11px;
+    color: #888;
+    text-align: center;
+}
+
+.toggle-btn {
+    background-color: #0f3460;
+    color: #e0e0e0;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    width: 100%;
+}
+
+.toggle-btn:hover {
+    background-color: #185a9d;
+}
+
+.toggle-btn.active {
+    background-color: #185a9d;
+    border: 1px solid #4a90d9;
 }
 
 .loading {

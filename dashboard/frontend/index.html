@@ -33,22 +33,30 @@
         <button onclick="setLastDays(365)">Last year</button>
     </div>
 
-    <div class="metrics">
-        <div class="metric-card">
-            <div class="metric-label">Total Generation</div>
-            <div class="metric-value" id="metric-generation">—</div>
+    <div class="metrics-container">
+        <div class="metrics">
+            <div class="metric-card">
+                <div class="metric-label">Total Generation</div>
+                <div class="metric-value" id="metric-generation">—</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Renewables Share</div>
+                <div class="metric-value" id="metric-renewables">—</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Avg. Price</div>
+                <div class="metric-value" id="metric-price">—</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Consumption</div>
+                <div class="metric-value" id="metric-consumption">—</div>
+            </div>
         </div>
-        <div class="metric-card">
-            <div class="metric-label">Renewables Share</div>
-            <div class="metric-value" id="metric-renewables">—</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">Avg. Price</div>
-            <div class="metric-value" id="metric-price">—</div>
-        </div>
-        <div class="metric-card">
-            <div class="metric-label">Total Consumption</div>
-            <div class="metric-value" id="metric-consumption">—</div>
+
+        <div class="chart-toggle">
+            <p class="toggle-label">Generation Mix</p>
+            <button id="btn-area" class="toggle-btn active" onclick="setChartType('area')">Area</button>
+            <button id="btn-line" class="toggle-btn" onclick="setChartType('line')">Line</button>
         </div>
     </div>
 

@@ -1,6 +1,6 @@
 const isLocal = window.location.hostname === 'localhost' ||
-                window.location.hostname === '127.0.0.1' ||
-                window.location.hostname === '';
+    window.location.hostname === '127.0.0.1' ||
+    window.location.hostname === '';
 
 const API_URL = isLocal
     ? 'http://localhost:5000'
@@ -198,10 +198,11 @@ function renderCharts(data, priceData, nuclearData = []) {
             ? nuclearData.map(d => d['Kernenergie'] ?? 0)
             : data.map(d => d[source.key] ?? 0);
 
-        // Timestamps according to source
         const xValues = source.key === 'Kernenergie'
             ? nuclearData.map(d => new Date(d.timestamps))
             : timestamps;
+
+        const isArea = currentChartType === 'area';
 
         return {
             x: xValues,
@@ -209,9 +210,10 @@ function renderCharts(data, priceData, nuclearData = []) {
             name: ENGLISH_MAPPING[source.key],
             type: 'scatter',
             mode: 'lines',
-            stackgroup: 'one',
-            line: { width: 0 },
-            fillcolor: source.color
+            stackgroup: isArea ? 'one' : undefined,
+            line: { width: isArea ? 0 : 1.5 },
+            fillcolor: isArea ? source.color : undefined,
+            line: { color: source.color, width: isArea ? 0 : 1.5 }
         };
     });
 
@@ -269,4 +271,19 @@ function renderCharts(data, priceData, nuclearData = []) {
             yaxis: { title: '€/MWh' }
         });
     }
+}
+
+let currentChartType = 'area';
+
+function setChartType(type) {
+    currentChartType = type;
+
+    // Buttons aktualisieren
+    document.getElementById('btn-area').classList.toggle('active', type === 'area');
+    document.getElementById('btn-line').classList.toggle('active', type === 'line');
+
+    // Chart neu rendern
+    const from = document.getElementById('date-from').value;
+    const to = document.getElementById('date-to').value;
+    loadData();
 }
