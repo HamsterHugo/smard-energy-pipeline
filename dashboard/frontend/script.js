@@ -67,3 +67,13 @@ function setLastDays(days) {
 
     loadData();
 }
+
+function showLoading() {
+    document.getElementById('loading-overlay').classList.add('visible');
+    document.body.style.cursor = 'wait';
+}
+
+function hideLoading() {
+    document.getElementById('loading-overlay').classList.remove('visible');
+    document.body.style.cursor = 'default';
+}
