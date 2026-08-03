@@ -59,7 +59,8 @@ class StatusAwareRichHandler(RichHandler):
 custome_theme: Theme = Theme(
     {
         "status.success": "green",
-        "status.complete": "bold green"
+        "status.complete": "bold green",
+        "status.fail": "red"
     }
 )
 
