@@ -36,4 +36,18 @@ const ENGLISH_MAPPING = {
     'Braunkohle': 'Lignite',
     'Sonstige Konventionelle': 'Other Conventional',
     'Kernenergie': 'Nuclear Energy'
-}
+};
+
+const LAYOUT_BASE = {
+    paper_bgcolor: '#16213e',
+    plot_bgcolor: '#16213e',
+    font: { color: '#e0e0e0' },
+    margin: { t: 10, r: 20, b: 80, l: 60 },
+    legend: { bgcolor: '#16213e' },
+    xaxis: {
+        title: 'Time',
+        tickangle: 0,
+        autorange: true,
+        rangeslider: { visible: false }
+    }
+};
