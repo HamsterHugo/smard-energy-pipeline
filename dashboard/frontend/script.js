@@ -108,3 +108,57 @@ async function loadData() {
         hideLoading();
     }
 }
+
+function updateMetrics(data, priceData) {
+    const from = document.getElementById('date-from').value;
+
+    // No data before 2015
+    if (from < DATA_START_DATE) {
+        document.getElementById('metric-generation').textContent = '—';
+        document.getElementById('metric-renewables').textContent = '—';
+        document.getElementById('metric-price').textContent = '—';
+        document.getElementById('metric-consumption').textContent = '—';
+        return;
+    }
+
+    // Renewable scoureces
+    const RENEWABLE_SOURCES = [
+        'Photovoltaik', 'Wind Onshore', 'Wind Offshore',
+        'Biomasse', 'Wasserkraft', 'Pumpspeicher', 'Sonstige Erneuerbare'
+    ];
+
+    // Total generation at time
+    const generationPerRow = data.map(d =>
+        GENERATION_SOURCES.reduce((sum, s) => sum + (d[s.key] ?? 0), 0)
+    );
+
+    // Renewable energies at time
+    const renewablesPerRow = data.map(d =>
+        RENEWABLE_SOURCES.reduce((sum, key) => sum + (d[key] ?? 0), 0)
+    );
+
+    // Compute sums
+    const totalGeneration = generationPerRow.reduce((a, b) => a + b, 0);
+    const totalRenewables = renewablesPerRow.reduce((a, b) => a + b, 0);
+    const totalConsumption = data.reduce((sum, d) => sum + (d['Gesamt (Netzlast)'] ?? 0), 0);
+
+    // Renewable energies percentage
+    const renewablesShare = totalGeneration > 0
+        ? (totalRenewables / totalGeneration * 100).toFixed(1)
+        : 0;
+
+    // Average marketprice
+    const avgPrice = priceData.length > 0
+        ? (priceData.reduce((sum, d) => sum + (d['Deutschland-Luxemburg'] ?? 0), 0) / priceData.length).toFixed(2)
+        : null;
+
+    // Metrics
+    document.getElementById('metric-generation').textContent =
+        (totalGeneration / 1_000_000).toFixed(2) + ' TWh';
+    document.getElementById('metric-renewables').textContent =
+        renewablesShare + ' %';
+    document.getElementById('metric-price').textContent =
+        avgPrice !== null ? avgPrice + ' €/MWh' : '—';
+    document.getElementById('metric-consumption').textContent =
+        (totalConsumption / 1_000_000).toFixed(2) + ' TWh';
+}
