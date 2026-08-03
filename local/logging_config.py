@@ -48,7 +48,7 @@ class StatusAwareRichHandler(RichHandler):
             return Text.styled(f"{label}", f"status.{status}")
         return super().get_level_text(record)
 
-    def render_message(self, record: logging.LogRecord, message: str):
+    def render_message(self, record: logging.LogRecord, message: str) -> Text:
         status: str = getattr(record, "status", None)
         message_renderable = super().render_message(record, message)
         if status in self.STATUS_ICONS:
