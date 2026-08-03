@@ -162,3 +162,110 @@ function updateMetrics(data, priceData) {
     document.getElementById('metric-consumption').textContent =
         (totalConsumption / 1_000_000).toFixed(2) + ' TWh';
 }
+
+function renderCharts(data, priceData, nuclearData = []) {
+    const from = document.getElementById('date-from').value;
+
+    // Helping function for showing "NO DATA AVAILABLE"
+    function showNoData(containerId) {
+        const container = document.getElementById(containerId);
+        container.innerHTML =
+            '<div style="text-align:center; padding:80px; color:#888;">NO DATA AVAILABLE</div>';
+    }
+
+    // Check if queried date is before 2015.
+    if (from < DATA_START_DATE) {
+        showNoData('chart-mix');
+        showNoData('chart-balance');
+        showNoData('chart-price');
+        return;
+    }
+
+    const timestamps = data.map(d => new Date(d.timestamps));
+
+    const mixContainer = document.getElementById('chart-mix');
+    mixContainer.innerHTML = '';
+
+    // Add Nuclear energy only if needed.
+    let sources = [...GENERATION_SOURCES];
+    if (nuclearData.length > 0) {
+        sources = [NUCLEAR_SOURCE, ...sources];
+    }
+
+    const mixTraces = sources.map(source => {
+        const values = source.key === 'Kernenergie'
+            ? nuclearData.map(d => d['Kernenergie'] ?? 0)
+            : data.map(d => d[source.key] ?? 0);
+
+        // Timestamps according to source
+        const xValues = source.key === 'Kernenergie'
+            ? nuclearData.map(d => new Date(d.timestamps))
+            : timestamps;
+
+        return {
+            x: xValues,
+            y: values,
+            name: ENGLISCH_MAPPING[source.key],
+            type: 'scatter',
+            mode: 'lines',
+            stackgroup: 'one',
+            line: { width: 0 },
+            fillcolor: source.color
+        };
+    });
+
+    Plotly.newPlot('chart-mix', mixTraces, {
+        ...LAYOUT_BASE,
+        yaxis: { title: 'MWh' }
+    });
+
+    // Chart 2 — Generation vs Consumption
+    const balanceContainer = document.getElementById('chart-balance');
+    balanceContainer.innerHTML = '';
+
+    const totalGeneration = data.map(d =>
+        GENERATION_SOURCES.reduce((sum, s) => sum + (d[s.key] ?? 0), 0)
+    );
+
+    Plotly.newPlot('chart-balance', [
+        {
+            x: timestamps,
+            y: totalGeneration,
+            name: 'Total Generation',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#1D9E75', width: 2 }
+        },
+        {
+            x: timestamps,
+            y: data.map(d => d['Gesamt (Netzlast)'] ?? 0),
+            name: 'Consumption',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#E74C3C', width: 2, dash: 'dot' }
+        }
+    ], {
+        ...LAYOUT_BASE,
+        yaxis: { title: 'MWh' }
+    });
+
+    // Chart 3 — Marketprice
+    const priceContainer = document.getElementById('chart-price');
+    priceContainer.innerHTML = '';
+
+    if (priceData.length === 0) {
+        showNoData('chart-price');
+    } else {
+        Plotly.newPlot('chart-price', [{
+            x: priceData.map(d => new Date(d.timestamps)),
+            y: priceData.map(d => d['Deutschland-Luxemburg']),
+            name: 'Day-Ahead Price',
+            type: 'scatter',
+            mode: 'lines',
+            line: { color: '#F39C12', width: 2 }
+        }], {
+            ...LAYOUT_BASE,
+            yaxis: { title: '€/MWh' }
+        });
+    }
+}
