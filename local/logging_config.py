@@ -56,6 +56,20 @@ class StatusAwareRichHandler(RichHandler):
             message_renderable.append(f" {icon}", style=f"status.{status}")
         return message_renderable
 
+class StatusAwareFileHandler(logging.FileHandler):
+    STATUS_ICONS: ClassVar[dict] = {
+        "success": "✔",
+        "complete": "★",
+        "fail": "✗"
+    }
+
+    def get_level_text(self, record: logging.LogRecord) -> Text:
+        status: str = getattr(record, "status", None)
+        if status in self.STATUS_ICONS:
+            label: str = status.upper().ljust(8)
+            return Text.styled(f"{label}", f"status.{status}")
+        return super().get_level_text(record)
+
 custome_theme: Theme = Theme(
     {
         "status.success": "green",
@@ -70,7 +84,7 @@ console_handler: StatusAwareRichHandler = StatusAwareRichHandler(
     console=console,
     log_time_format="[%d.%m.%y %X]"
 )
-file_handler: logging.FileHandler = logging.FileHandler(
+file_handler: StatusAwareFileHandler = StatusAwareFileHandler(
     filename=LOGS_DIR / 'pipeline.log',
     encoding='utf8'
 )
