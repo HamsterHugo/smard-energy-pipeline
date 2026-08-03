@@ -4,7 +4,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from smard_pipeline.config import RAW_DATA_DIR, PREPROCESSED_DATA_DIR, LOGS_DIR
+from smard_pipeline.config import RAW_DATA_DIR, PREPROCESSED_DATA_DIR
 from smard_pipeline.config import PATH_DICT, CATEGORIES
 
 logger = logging.getLogger(__name__)
