@@ -1,4 +1,5 @@
 import logging
+import datetime
 from pathlib import Path
 
 import pandas as pd
@@ -103,5 +104,59 @@ def merge_all_categories() -> None:
 
         combined_df['timestamps'] = convert_timestamp_column(combined_df['timestamps'])
         output_path = PREPROCESSED_DATA_DIR / 'combined_historical.parquet'
+        combined_df.to_parquet(output_path)
+        logger.info(f"Combined file saved: {output_path}.", extra={"status": "success"})
+
+def get_current_timestamp() -> int:
+    """Computes the timestamp of the last monday at 00:00 AM for the smard API.
+
+    Returns:
+        int: The timestamp of the current week.
+    """
+    now = datetime.datetime.now()
+    days_since_monday = now.weekday()
+    last_monday = now - datetime.timedelta(days=days_since_monday)
+    last_monday = last_monday.replace(hour=0, minute=0, second=0, microsecond=0)
+
+    return int(last_monday.timestamp()*1000)
+
+def combine_current_week() -> None:
+    df_list: list[pd.DataFrame] = []
+    current_timestamp = get_current_timestamp()
+    counter: int = 0
+    missing_files: list = []
+
+    for category, subcategory in CATEGORIES.items():
+        for name, config in subcategory.items():
+            if not config['include_in_table']:
+                continue
+
+            smard_id: int = config['id']
+            file: Path = RAW_DATA_DIR / "current_week" / f"{smard_id}_{current_timestamp}.parquet"
+            counter += 1
+
+            if not file.exists():
+                logger.warning(f"File {file.name} not found. You have to download the current data for {category}: {name}.")
+                missing_files.append((category, name))
+                continue
+
+            df: pd.DataFrame = pd.read_parquet(file)
+            df.columns = ('timestamps', name)
+            df_list.append(df)
+            logger.info(f"Found file for {category}: {name}.")
+
+    if not df_list:
+        logger.error("No current data files found. You have to download them.")
+    elif (l:=len(df_list)) < counter:
+        logger.error(f"There are {counter-l} files missing, namely:")
+        for category, subcategory in missing_files:
+            logger.error(f"    {category}: {subcategory}")
+    else:
+        combined_df: pd.DataFrame = df_list[0]
+        for df in df_list[1:]:
+            combined_df = pd.merge(combined_df, df, how='inner', on='timestamps')
+
+        combined_df['timestamps'] = convert_timestamp_column(combined_df['timestamps'])
+        output_path = PREPROCESSED_DATA_DIR / 'combined_current.parquet'
         combined_df.to_parquet(output_path)
         logger.info(f"Combined file saved: {output_path}.", extra={"status": "success"})
