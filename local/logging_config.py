@@ -58,18 +58,32 @@ class StatusAwareRichHandler(RichHandler):
 
 custome_theme: Theme = Theme(
     {
-        "status.success": "dark_green",
+        "status.success": "green",
         "status.complete": "bold green"
     }
 )
 
+# Set handler.
 console: Console = Console(record=True, theme=custome_theme)
+console_handler: StatusAwareRichHandler = StatusAwareRichHandler(
+    console=console,
+    log_time_format="[%d.%m.%y %X]"
+)
+file_handler: logging.FileHandler = logging.FileHandler(
+    filename=LOGS_DIR / 'pipeline.log',
+    encoding='utf8'
+)
+formatter: logging.Formatter = logging.Formatter(
+    fmt="%(asctime)s %(name)s %(levelname)s : %(message)s",
+    datefmt="[%d.%m.%y %X]"
+)
+file_handler.formatter = formatter
 
 def setup_logging(level: int = logging.DEBUG):
     logging.basicConfig(
         level=level,
         format="%(message)s",
-        handlers=[StatusAwareRichHandler(console=console)]
+        handlers=[console_handler, file_handler]
     )
 
 def save_log_to_html(file_name: str) -> None:
