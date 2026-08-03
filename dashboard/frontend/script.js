@@ -77,3 +77,34 @@ function hideLoading() {
     document.getElementById('loading-overlay').classList.remove('visible');
     document.body.style.cursor = 'default';
 }
+
+async function loadData() {
+    showLoading();
+    try {
+        const from = document.getElementById('date-from').value;
+        const to = document.getElementById('date-to').value;
+
+        // Kernenergie nur abfragen wenn Zeitraum vor Abschaltdatum liegt
+        const needsNuclear = from < NUCLEAR_END_DATE;
+
+        const requests = [
+            fetch(`${API_URL}/data?from=${from}&to=${to}`),
+            fetch(`${API_URL}/price?from=${from}&to=${to}`)
+        ];
+
+        if (needsNuclear) {
+            requests.push(fetch(`${API_URL}/nuclear?from=${from}&to=${to}`));
+        }
+
+        const responses = await Promise.all(requests);
+        const data = await responses[0].json();
+        const priceData = await responses[1].json();
+        const nuclearData = needsNuclear ? await responses[2].json() : [];
+
+        updateMetrics(data, priceData);
+        renderCharts(data, priceData, nuclearData);
+    }
+    finally {
+        hideLoading();
+    }
+}
