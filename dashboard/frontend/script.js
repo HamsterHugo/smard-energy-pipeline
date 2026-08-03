@@ -22,3 +22,18 @@ const GENERATION_SOURCES = [
     { key: 'Sonstige Konventionelle', color: '#BDC3C7' },
 ];
 const NUCLEAR_SOURCE = { key: 'Kernenergie', color: '#FF6B6B' };
+
+const ENGLISH_MAPPING = {
+    'Photovoltaik': 'Photovoltaics (PV)',
+    'Wind Onshore': 'Wind Onshore',
+    'Wind Offshore': 'Wind Offshore',
+    'Biomasse': 'Biomass',
+    'Wasserkraft': 'Hydropower',
+    'Pumpspeicher': 'Pumped Storage',
+    'Sonstige Erneuerbare': 'Other Renewables',
+    'Erdgas': 'Natural Gas',
+    'Steinkohle': 'Hard Coal',
+    'Braunkohle': 'Lignite',
+    'Sonstige Konventionelle': 'Other Conventional',
+    'Kernenergie': 'Nuclear Energy'
+}
