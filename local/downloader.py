@@ -77,7 +77,7 @@ def update_raw_data(category: str, subcategory: str) -> None:
                     data = get_smard_timeseries(smard_id, timestamp)
                     df = pd.DataFrame(
                         data['series'],
-                        columns=['timestamp', 'value_mwh']
+                        columns=['timestamps', 'value_mwh']
                     )
                     output_path = OUTPUT_DIR / file_name
                     df.to_parquet(output_path, index=False)
@@ -142,7 +142,7 @@ def download_current_week(category: str, subcategory: str) -> None:
             data = get_smard_timeseries(smard_id, timestamp)
             df = pd.DataFrame(
                 data['series'],
-                columns=['timestamp', 'value_mwh']
+                columns=['timestamps', 'value_mwh']
             )
             output_path = OUTPUT_DIR / file_name
             df.to_parquet(output_path, index=False)
