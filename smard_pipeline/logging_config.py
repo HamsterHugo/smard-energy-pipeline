@@ -44,7 +44,7 @@ CUSTOM_CONSOLE_THEME: Theme = Theme(
         "status.success": "green",
         "status.complete": "bold green",
         "status.fail": "red",
-        "status.report": "bold orange_red1"
+        "status.report": "bold dark_orange"
     }
 )
 FORMAT: str = "%(asctime)s %(name)s %(levelname)s : %(message)s"
