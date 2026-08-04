@@ -5,7 +5,8 @@ from pathlib import Path
 import pandas as pd
 
 from smard_pipeline.config import CATEGORIES, RAW_DATA_DIR, PATH_DICT
-from smard_pipeline.smard_api import is_current_week, get_timestamps, get_smard_timeseries
+from smard_pipeline.smard_api import get_timestamps, get_smard_timeseries
+from smard_pipeline.current_week import fetch_current_week, is_current_week
 
 logger = logging.getLogger(__name__)
 
@@ -111,41 +112,56 @@ def download_current_week(category: str, subcategory: str) -> None:
         subcategory (str): Subcategory key within the category
             (e.g. 'Erdgas', 'Residuallast').
     """
-    # Check for valid arguments.
-    if category not in CATEGORIES:
-        logger.error(f"Unkown category: '{category}'")
-        logger.error(f"Available categories: '{list(CATEGORIES.keys())}'")
-        return
-    
-    if subcategory not in CATEGORIES[category]:
-        logger.error(f"Unkown subcategory: '{subcategory}'")
-        logger.error(f"Available subcategories: '{list(CATEGORIES[category].keys())}'")
-        return
+    fetched_result = fetch_current_week(category, subcategory)
+    if fetched_result is None:
+        logger.info(f"No data for {category}: {subcategory} downloaded.", extra={"status": "failed"})
+        return None
 
-    # Set paths for downloads and logs.
+    df: pd.DataFrame = fetched_result[0]
+    smard_id: int = CATEGORIES[category][subcategory]['id']
+    timestamp: int = fetched_result[1]
+    file_name: str = f'{smard_id}_{timestamp}.parquet'
     OUTPUT_DIR: Path = RAW_DATA_DIR / 'current_week'
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
+    output_path: Path = OUTPUT_DIR / file_name
+
+    df.to_parquet(output_path, index=False)
+    logger.info(f"File saved: {file_name}.", extra={"status": "success"})
+    # Check for valid arguments.
+#    if category not in CATEGORIES:
+#        logger.error(f"Unkown category: '{category}'")
+#        logger.error(f"Available categories: '{list(CATEGORIES.keys())}'")
+#        return
+#    
+#    if subcategory not in CATEGORIES[category]:
+#        logger.error(f"Unkown subcategory: '{subcategory}'")
+#        logger.error(f"Available subcategories: '{list(CATEGORIES[category].keys())}'")
+#        return
+
+    # Set paths for downloads and logs.
+#    OUTPUT_DIR: Path = RAW_DATA_DIR / 'current_week'
+#    OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     # Setting smard_id for API request.
-    smard_id: int = CATEGORIES[category][subcategory]['id']
+#    smard_id: int = CATEGORIES[category][subcategory]['id']
 
-    timestamp: int = get_timestamps(smard_id)[-1]
+#    timestamp: int = get_timestamps(smard_id)[-1]
 
-    if not is_current_week(timestamp):
-        logger.warning(f"There are nor current data for {category}: {subcategory}")
-    else:
-        logger.info(f'Current data available for {category}: {subcategory}.')
-        logger.info('Start downloading...')
+#    if not is_current_week(timestamp):
+#        logger.warning(f"There are nor current data for {category}: {subcategory}")
+#    else:
+#        logger.info(f'Current data available for {category}: {subcategory}.')
+#        logger.info('Start downloading...')
 
-        file_name: str = f'{smard_id}_{timestamp}.parquet'
-        try:
-            data = get_smard_timeseries(smard_id, timestamp)
-            df = pd.DataFrame(
-                data['series'],
-                columns=['timestamps', 'value_mwh']
-            )
-            output_path = OUTPUT_DIR / file_name
-            df.to_parquet(output_path, index=False)
-            logger.info(f"File saved: {file_name}.", extra={"status": "success"})
-        except Exception as error:
-            logger.critical(error, exc_info=error)
+#        file_name: str = f'{smard_id}_{timestamp}.parquet'
+#        try:
+#            data = get_smard_timeseries(smard_id, timestamp)
+#            df = pd.DataFrame(
+#                data['series'],
+#                columns=['timestamps', 'value_mwh']
+#            )
+#            output_path = OUTPUT_DIR / file_name
+#            df.to_parquet(output_path, index=False)
+#            logger.info(f"File saved: {file_name}.", extra={"status": "success"})
+#        except Exception as error:
+#            logger.critical(error, exc_info=error)
