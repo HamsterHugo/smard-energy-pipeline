@@ -4,7 +4,7 @@ import logging
 from downloader import update_raw_data, download_current_week
 from smard_pipeline.config import CATEGORIES
 from smard_pipeline.transformations import merge_raw_data, combine_data
-from logging_config import setup_logging, save_log_to_html
+from smard_pipeline.logging_config import setup_logging, save_log_to_html
 
 usage: str = """
 USAGE:
