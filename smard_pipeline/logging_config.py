@@ -55,7 +55,7 @@ class StatusAwareRichHandler(RichHandler):
 
     def get_level_text(self, record: logging.LogRecord) -> Text:
         status: str = getattr(record, "status", None)
-        if status in self.STATUS_ICONS:
+        if record.levelno == logging.INFO and status in self.STATUS_ICONS:
             label: str = status.upper().ljust(8)
             return Text.styled(f"{label}", f"status.{status}")
         return super().get_level_text(record)
@@ -63,17 +63,20 @@ class StatusAwareRichHandler(RichHandler):
     def render_message(self, record: logging.LogRecord, message: str) -> Text:
         status: str = getattr(record, "status", None)
         message_renderable = super().render_message(record, message)
-        if status in self.STATUS_ICONS:
+        if record.levelno == logging.INFO and status in self.STATUS_ICONS:
             icon: str = self.STATUS_ICONS[status]
             if icon is not None:
                 message_renderable.append(f" {icon}", style=f"status.{status}")
         return message_renderable
 
 class StatusAwareFormatter(logging.Formatter):
+    STATUS: ClassVar[dict] = STATUS_ICONS
+
     def format(self, record):
         original_levelname = record.levelname
         status = getattr(record, "status", None)
-        if status: record.levelname = status.upper()
+        if record.levelno == logging.INFO and status in self.STATUS:
+            record.levelname = status.upper()
         formatted_message = super().format(record)
         record.levelname = original_levelname
 
