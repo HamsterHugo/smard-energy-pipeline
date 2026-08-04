@@ -11,6 +11,6 @@ variable "owner" {
 
 variable "environment" {
   description = "Deployment environment."
-  type = string
-  default = "dev"
+  type        = string
+  default     = "dev"
 }
