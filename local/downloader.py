@@ -114,7 +114,7 @@ def download_current_week(category: str, subcategory: str) -> None:
     """
     fetched_result = fetch_current_week(category, subcategory)
     if fetched_result is None:
-        logger.info(f"No data for {category}: {subcategory} downloaded.", extra={"status": "failed"})
+        logger.info(f"No data for {category}: {subcategory} downloaded.", extra={"status": "fail"})
         return None
 
     df: pd.DataFrame = fetched_result[0]
