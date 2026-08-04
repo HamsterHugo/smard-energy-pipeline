@@ -111,4 +111,5 @@ def setup_lambda_logging(level: int = logging.DEBUG):
     )
 
 def save_log_to_html(file_name: str) -> None:
-    console.save_html(LOGS_DIR / f"{file_name}.html", theme=CUSTOM_TERMINAL_THEME)
+    if not file_name.endswith('.html'): file_name += '.html'
+    console.save_html(LOGS_DIR / f"{file_name}", theme=CUSTOM_TERMINAL_THEME)
