@@ -43,7 +43,8 @@ if __name__ == '__main__':
 
         if subcategory == 'all':
             for current_subcategory in CATEGORIES[category]:
-                f(category, current_subcategory)
+                if sys.argv[1] == 'current' and CATEGORIES[category][current_subcategory]['daily_download']:
+                    f(category, current_subcategory)
         else:
             f(category, subcategory)
     else:
