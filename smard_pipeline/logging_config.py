@@ -69,15 +69,15 @@ class StatusAwareRichHandler(RichHandler):
                 message_renderable.append(f" {icon}", style=f"status.{status}")
         return message_renderable
 
-class StatusAwareFileHandler(logging.FileHandler):
-    STATUS_ICONS: ClassVar[dict] = STATUS_ICONS
+class StatusAwareFormatter(logging.Formatter):
+    def format(self, record):
+        original_levelname = record.levelname
+        status = getattr(record, "status", None)
+        if status: record.levelname = status.upper()
+        formatted_message = super().format(record)
+        record.levelname = original_levelname
 
-    def get_level_text(self, record: logging.LogRecord) -> Text:
-        status: str = getattr(record, "status", None)
-        if status in self.STATUS_ICONS:
-            label: str = status.upper().ljust(8)
-            return Text.styled(f"{label}", f"status.{status}")
-        return super().get_level_text(record)
+        return formatted_message
 
 console: Console = Console(record=True, theme=CUSTOM_CONSOLE_THEME)
 
@@ -86,15 +86,15 @@ def setup_logging(level: int = logging.DEBUG):
         console=console,
         log_time_format=DATE_FORMAT
     )
-    file_handler: StatusAwareFileHandler = StatusAwareFileHandler(
+    file_handler: logging.FileHandler = logging.FileHandler(
         filename=LOGS_DIR / 'pipeline.log',
         encoding='utf8'
     )
-    formatter: logging.Formatter = logging.Formatter(
+    formatter: StatusAwareFormatter = StatusAwareFormatter(
         fmt=FORMAT,
         datefmt=DATE_FORMAT
     )
-    file_handler.formatter = formatter
+    file_handler.setFormatter(formatter)
 
     logging.basicConfig(
         level=level,
