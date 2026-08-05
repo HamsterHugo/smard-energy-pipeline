@@ -43,8 +43,9 @@ if __name__ == '__main__':
 
         if subcategory == 'all':
             for current_subcategory in CATEGORIES[category]:
-                if sys.argv[1] == 'current' and CATEGORIES[category][current_subcategory]['daily_download']:
-                    f(category, current_subcategory)
+                if sys.argv[1] == 'current' and not CATEGORIES[category][current_subcategory]['daily_download']:
+                    continue
+                f(category, current_subcategory)
         else:
             f(category, subcategory)
     else:
