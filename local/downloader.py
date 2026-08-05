@@ -27,7 +27,9 @@ def update_raw_data(category: str, subcategory: str) -> None:
     
     if subcategory not in CATEGORIES[category]:
         logger.error(f"Unkown subcategory: '{subcategory}'")
-        logger.error(f"Available subcategories: '{list(CATEGORIES[category].keys())}'")
+        logger.error(
+            f"Available subcategories: '{list(CATEGORIES[category].keys())}'"
+        )
         return
 
     # Set paths for downloads and logs.
@@ -54,14 +56,21 @@ def update_raw_data(category: str, subcategory: str) -> None:
         online_timestamps.pop()
 
     if len(downloaded_timestamps) == len(online_timestamps):
-        logger.info(f"Historical files for {category}: {subcategory} are up to date.")
+        logger.info(
+            f"Historical files for {category}: {subcategory} are up to date."
+        )
     else:
         # Find number of missing files.
         number: int = len(online_timestamps)-len(downloaded_timestamps)
         if number == 1:
-            logger.info(f"There is {number} file missing for {category}: {subcategory}.")
+            logger.info(
+                f"There is {number} file missing for {category}: {subcategory}."
+            )
         else:
-            logger.info(f"There are {number} files missing for {category}: {subcategory}.")
+            logger.info(
+                f"There are {number} files missing for "
+                f"{category}: {subcategory}."
+            )
         # Set counter variable for the missing files.
         counter = 0
 
@@ -83,24 +92,39 @@ def update_raw_data(category: str, subcategory: str) -> None:
                     output_path = OUTPUT_DIR / file_name
                     df.to_parquet(output_path, index=False)
                     counter += 1
-                    logger.info(f"File {file_name} saved.", extra={"status": "success"})
+                    logger.info(
+                        f"File {file_name} saved.",
+                        extra={"status": "success"}
+                    )
                     if counter < number:
                         logger.info(f"Update: {counter}/{number}")
                     else:
                         logger.info(f"Update: {counter}/{number}")
                 except Exception as error:
                     failed_downloads.append(timestamp)
-                    logger.error(f"Download for {category}: {subcategory} at timestamp {timestamp} failed!", exc_info=error)
+                    logger.error(
+                        f"Download for {category}: {subcategory} at timestamp"
+                        f"{timestamp} failed!",
+                        exc_info=error
+                    )
                 # Small time out for API request.
                 time.sleep(0.2)
 
         if counter < number:
-            logger.info(f"Update was not successfull. There are {number-counter} files missing!", extra={"status": "fail"})
+            logger.info(
+                f"Update was not successfull. There are {number-counter} files "
+                f"missing!",
+                extra={"status": "fail"}
+            )
             logger.info("Missing timestamps are:")
             for item in failed_downloads:
                 logger.info(f"    {item}")
         else:
-            logger.info(f"Historical files for {category}: {subcategory} are now up to date!", extra={"status": "complete"})
+            logger.info(
+                f"Historical files for {category}: {subcategory} are now up "
+                f"to date!",
+                extra={"status": "complete"}
+            )
 
 def download_current_week(category: str, subcategory: str) -> None:
     """Downloads the time series block of the current week for the queried
@@ -112,15 +136,16 @@ def download_current_week(category: str, subcategory: str) -> None:
         subcategory (str): Subcategory key within the category
             (e.g. 'Erdgas', 'Residuallast').
     """
-    fetched_result = fetch_current_week(category, subcategory)
-    if fetched_result is None:
-        logger.info(f"No data for {category}: {subcategory} downloaded.", extra={"status": "fail"})
+    df: pd.DataFrame = fetch_current_week(category, subcategory)
+    if df is None:
+        logger.info(
+            f"No data for {category}: {subcategory} downloaded.",
+            extra={"status": "fail"}
+        )
         return None
 
-    df: pd.DataFrame = fetched_result[0]
     smard_id: int = CATEGORIES[category][subcategory]['id']
-    timestamp: int = fetched_result[1]
-    file_name: str = f'{smard_id}_{timestamp}.parquet'
+    file_name: str = f'{smard_id}_{int(df.iloc[0,0])}.parquet'
     OUTPUT_DIR: Path = RAW_DATA_DIR / 'current_week'
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     output_path: Path = OUTPUT_DIR / file_name
