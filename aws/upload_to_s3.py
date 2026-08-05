@@ -49,14 +49,20 @@ def upload_historical_data() -> None:
     """Uploads all historical parquet files to S3."""
     logger.info('Uploading historical data...')
     counter: int = 0
-    for file in [COMBINED_HISTORICAL, NUCLEAR_HISTORICAL, MARKET_PRICE_HISTORICAL]:
+    files_dir: list = [
+        COMBINED_HISTORICAL,
+        NUCLEAR_HISTORICAL,
+        MARKET_PRICE_HISTORICAL
+    ]
+    l: int = len(files_dir)
+    for file in files_dir:
         success = upload_file(PREPROCESSED_DATA_DIR / file, f'historical/{file}')
         if success: counter += 1
 
-    if counter < 3:
-        logger.info(f"Upload: {counter}/3 files", extra={"status": "report"})
+    if counter < l:
+        logger.info(f"Upload: {counter}/{l} files", extra={"status": "report"})
     else:
-        logger.info(f"Upload: {counter}/3 files", extra={"status": "complete"})
+        logger.info(f"Upload: {counter}/{l} files", extra={"status": "complete"})
 
 def upload_frontend() -> None:
     logger.info(f"Uploading frontend files...")
@@ -66,15 +72,16 @@ def upload_frontend() -> None:
         ("script.js", 'application/javascript'),
         ("favicon.ico", 'image/x-icon')
     ]
+    l: int = len(frontend_files)
     counter: int = 0
     for file, ContentType in frontend_files:
         success = upload_file(FRONTEND_DIR / file, file, ConentType=ContentType)
         if success: counter += 1
 
-    if counter < 4:
-        logger.info(f"Upload: {counter}/4 files", extra={"status": "report"})
+    if counter < l:
+        logger.info(f"Upload: {counter}/{l} files", extra={"status": "report"})
     else:
-        logger.info(f"Upload: {counter}/4 files", extra={"status": "complete"})
+        logger.info(f"Upload: {counter}/{l} files", extra={"status": "complete"})
 
 if __name__ == '__main__':
     setup_logging(level=logging.INFO)
