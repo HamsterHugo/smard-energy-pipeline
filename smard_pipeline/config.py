@@ -10,6 +10,14 @@ COMBINED_HISTORICAL: str = 'combined_historical.parquet'
 NUCLEAR_HISTORICAL: str = '1224_historical.parquet'
 MARKET_PRICE_HISTORICAL: str = '4169_historical.parquet'
 
+# Current files
+COMBINED_CURRENT: str = 'combined_current.parquet'
+MARKET_PRICE_CURRENT: str = '4169_current.parquet'
+
+# S3 prefixes
+S3_PREFIX_HISTORICAL: str = 'historical/'
+S3_PREFIX_CURRENT: str = 'current/'
+
 # Define classes
 class TimeSeriesConfig(TypedDict):
     id: int
