@@ -29,7 +29,10 @@ def save_df_to_s3(df: pd.DataFrame, bucket: str, s3_key: str) -> bool:
         logger.info(f"Saved DataFrame to s3://{bucket}/{s3_key}")
         return True
     except Exception as error:
-        logger.error(f"Failed to save to s3://{bucket}/{s3_key}.", exc_info=error)
+        logger.error(
+            f"Failed to save to s3://{bucket}/{s3_key}.",
+            exc_info=error
+        )
         return False
 
 def load_df_from_s3(bucket: str, s3_key: str) -> pd.DataFrame | None:
@@ -50,5 +53,8 @@ def load_df_from_s3(bucket: str, s3_key: str) -> pd.DataFrame | None:
         logger.info(f"Loaded DataFrame from s3://{bucket}/{s3_key}.")
         return df
     except Exception as error:
-        logger.error(f"Failed to load from s3://{bucket}/{s3_key}.", exc_info=error)
+        logger.error(
+            f"Failed to load from s3://{bucket}/{s3_key}.",
+            exc_info=error
+        )
         return None
