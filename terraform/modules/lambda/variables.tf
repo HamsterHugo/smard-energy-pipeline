@@ -43,3 +43,8 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
+
+variable "bucket_name" {
+  description = "Name of the S3 bucket the Lambda function needs access to."
+  type        = string
+}

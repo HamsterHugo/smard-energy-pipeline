@@ -11,6 +11,7 @@ module "lambda_ingest" {
   source        = "./modules/lambda"
   function_name = "${local.name_prefix}-ingest"
   source_dir    = "${path.root}/../aws/lambda/ingest"
+  bucket_name   = module.data_bucket.bucket_id
   tags          = local.common_tags
 }
 
@@ -18,6 +19,7 @@ module "lambda_query" {
   source        = "./modules/lambda"
   function_name = "${local.name_prefix}-query"
   source_dir    = "${path.root}/../aws/lambda/query"
+  bucket_name   = module.data_bucket.bucket_id
   tags          = local.common_tags
 }
 
