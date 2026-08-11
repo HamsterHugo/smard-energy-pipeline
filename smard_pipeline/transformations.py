@@ -42,7 +42,9 @@ def merge_raw_data(category: str, subcategory: str) -> None:
     
     if subcategory not in CATEGORIES[category]:
         logger.error(f"Unkown subcategory: '{subcategory}'")
-        logger.error(f"Available subcategories: '{list(CATEGORIES[category].keys())}'")
+        logger.error(
+            f"Available subcategories: '{list(CATEGORIES[category].keys())}'"
+        )
         return
 
     logger.info(f"Search data for {category}: {subcategory}...")
@@ -57,7 +59,9 @@ def merge_raw_data(category: str, subcategory: str) -> None:
 
     if not weekly_blocks:
         logger.error(f"No files found for {category}: {subcategory}.")
-        logger.warning(f"You have to download the data for {category}: {subcategory}")
+        logger.warning(
+            f"You have to download the data for {category}: {subcategory}"
+        )
     else:
         logger.info(f"Found data for {len(weekly_blocks)} weeks.")
         logger.info(f"Start merging...")
@@ -66,10 +70,16 @@ def merge_raw_data(category: str, subcategory: str) -> None:
         df = df.dropna()
         if not CATEGORIES[category][subcategory]['include_in_table']:
             df['timestamps'] = convert_timestamp_column(df['timestamps'])
-        logger.info(f"Raw data for {category}: {subcategory} merged!", extra={"status": "success"})
+        logger.info(
+            f"Raw data merged for {category}: {subcategory}!",
+            extra={"status": "success"}
+        )
         output_path = PREPROCESSED_DATA_DIR / f'{smard_id}_historical.parquet'
         df.to_parquet(output_path)
-        logger.info(f"File saved: {output_path.name}.", extra={"status": "success"})
+        logger.info(
+            f"File saved: {output_path.name}.",
+            extra={"status": "success"}
+        )
 
 def get_current_timestamp() -> int:
     """Computes the timestamp of the last monday at 00:00 AM for the smard API.
@@ -125,7 +135,10 @@ def combine_data(data_type: str) -> None:
             df: pd.DataFrame = pd.read_parquet(file)
             if data_type == 'current': df.columns = ('timestamps', name)
             df_list.append(df)
-            logger.info(f'File found for {category}: {name} - {file.name}', extra={"status": "success"})
+            logger.info(
+                f'File found for {category}: {name} - {file.name}',
+                extra={"status": "success"}
+            )
 
     if not df_list:
         logger.error(f"No data found. You have to {'merge' if data_type == 'historical' else 'download'} it.")
@@ -136,9 +149,19 @@ def combine_data(data_type: str) -> None:
     else:
         combined_df: pd.DataFrame = df_list[0]
         for df in df_list[1:]:
-            combined_df = pd.merge(combined_df, df, how='inner', on='timestamps')
+            combined_df = pd.merge(
+                combined_df,
+                df,
+                how='inner',
+                on='timestamps'
+            )
 
-        combined_df['timestamps'] = convert_timestamp_column(combined_df['timestamps'])
+        combined_df['timestamps'] = convert_timestamp_column(
+            combined_df['timestamps']
+        )
         output_path = PREPROCESSED_DATA_DIR / f'combined_{data_type}.parquet'
         combined_df.to_parquet(output_path)
-        logger.info(f"Combined file saved: {output_path.name}.", extra={"status": "complete"})
+        logger.info(
+            f"Combined file saved: {output_path.name}.",
+            extra={"status": "complete"}
+        )
