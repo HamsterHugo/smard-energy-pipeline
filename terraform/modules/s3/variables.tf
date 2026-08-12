@@ -3,6 +3,11 @@ variable "bucket_name" {
   type        = string
 }
 
+variable "layer_zip" {
+  description = "Path to the Lambda Layer ZIP file."
+  type        = string
+}
+
 variable "tags" {
   description = "Tags to apply to the bucket."
   type        = map(string)
