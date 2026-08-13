@@ -158,9 +158,7 @@ Replace `<category>` and `<subcategory>` with the names of the desired category 
 
 For the dashboard you need all subcategories of `Stromerzeugung`. From the category `Stromverbrauch` you just need `Gesamt (Netzlast)` and `Residuallast`. For the category `Marktpreis` you only need `Deutschland-Luxemburg`. You can fetch the data with a command (`python main.py historical <category> <subcategory>`) for each category-subcategory pair or you can download all subcategories for one category at once with the command `python main.py historical <category> all`.
 
-<div style="background-color: #d1ecf1; color: #000; padding: 10px; border-left: 4px solid #17a2b8; margin: 10px 0;">
-  <strong>ℹ️ Notice:</strong> If you download all power generation data with the command <center>python main.py historical Stromerzeugung all</center> be aware that this will take posiible more than one hour!
-</div>
+ℹ️ **Notice:** If you download all power generation data with the command `python main.py historical Stromerzeugung all`, be aware that this will take possibly more than one hour!
 
 Since the Federal Network Agency publishes its data in weekly blocks you have to merges the timeseries. After that you have to combine the merged timeseries into one table. Then you do the same for the data of the current week.
 
