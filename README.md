@@ -156,6 +156,28 @@ Replace `<category>` and `<subcategory>` with the names of the desired category 
 | Marktpreis | Deutschland-Luxemburg, Anrainer DE-LU, Belgien, Norwegen 2, Österreich, Dänemark 1, Dänemark 2, Frankreich, Italien (Nord), Niederlande, Polen 1, Polen 2, Schweiz, Slowenien, Tschechien, Ungarn |
 | Prognostizierte Erzeugung | Offshore, Onshore, Photovoltaik, Sonstige, Wind und Photovoltaik, Gesamt |
 
+For the dashboard you need all subcategories of `Stromerzeugung`. From the category `Stromverbrauch` you just need `Gesamt (Netzlast)` and `Residuallast`. For the category `Marktpreis` you only need `Deutschland-Luxemburg`. You can fetch the data with a command (`python main.py historical <category> <subcategory>`) for each category-subcategory pair or you can download all subcategories for one category at once with the command `python main.py historical <category> all`.
+
+ℹ️ **Notice:** If you download all power generation data with the command `python main.py historical Stromerzeugung all`, be aware that this will take more than one hour!
+
+Since the Federal Network Agency publishes its data in weekly blocks you have to merges the timeseries. After that you have to combine the merged timeseries into one table. Then you do the same for the data of the current week.
+
+Summarizing, the workflow looks like this:
+```bash
+python main.py historical Stromerzeugung all
+python main.py historical Stromverbrauch all
+python main.py historical Marktpreis Deutschland-Luxemburg
+python main.py merge Stromerzeugung all
+python main.py merge Stromverbrauch all
+python main.py merge Marktpreis Deutschland-Luxemburg
+python main.py historical combine
+python main.py current Stromerzeugung all
+python main.py current Stromverbrauch all
+python main.py current Marktpreis Deutschland-Luxemburg
+python main.py current combine
+```
+
+After that you will have all data needed for the dashboard.
 
 ## 💻 Local Deployment
 
