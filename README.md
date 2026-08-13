@@ -103,6 +103,42 @@ smard-energy-pipeline/
 
 ## 🚀 Getting started
 
+1. Clone the repo to your local machine:
+```bash
+git clone https://github.com/HamsterHugo/smard-energy-pipeline.git
+```
+
+2. Create a virtual environment for Python
+If you are using Visual Studio Code you can do it by executing the following command:
+```bash
+python -m venv .venv
+```
+
+3. Download and preprocess the historical data from SMARD.de
+You have execute the Python scripts for downloading the timeseries. For that go to the folder `local/`:
+```bash
+cd local
+```
+
+If not already done, you have to install all the Python packages. For that enter the following command:
+```bash
+pip install -r requirements.txt
+```
+
+Now, you can download and preprocess the timeseries data from SMARD.de by using the script `main.py`. Here is a list of all valid commands:
+
+* ``python main.py historical <category> <subcategory>``
+* ``python main.py historical <category> all``
+* ``python main.py historical combine``
+* ``pyhton main.py merge <category> <subcategory>``
+* ``python main.py merge <category> all``
+* ``python main.py current <category> <subcategory>``
+* ``python main.py current <category> all``
+* ``python main.py current combine``
+
+Replace `<category>` and `<subcategory>` with the names of the desired category and subcategory. 
+
+
 ## 💻 Local Deployment
 
 ## ☁️ AWS Deployment
