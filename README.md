@@ -5,7 +5,7 @@
 ## **Project Overview**
 This data pipeline visualizes the data of the German energy market in a dashboard. It gives an overview of the generated and consumed power, the usage of the different energy sources and the market price for Germany.
 
-![Dashboard Scrrenshot](screenshots/dashboard.png)
+![Dashboard Scrrenshot](images/dashboard.png)
 
 The energy market data come from [Bundesnetzagentur | SMARD.de](https://www.smard.de/home), the website of the German Federal Network Agency. The data are published under the CC BY 4.0 licence.
 
@@ -37,7 +37,9 @@ smard-energy-pipeline/
 │   ├── main.py
 │   └── requirements.txt
 |
-├── screenshots/
+├── images/
+│   ├── architecture.excalidraw
+│   ├── architecture.png
 │   └── dashboard.png
 |
 ├── smard_pipeline/
@@ -89,6 +91,8 @@ smard-energy-pipeline/
 
 
 ## 🏗️ Architecture & Technologies
+
+![Architecture Diagram](images/architecture.png)
 
 ## 🚀 Getting started
 
