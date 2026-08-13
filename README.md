@@ -94,6 +94,13 @@ smard-energy-pipeline/
 
 ![Architecture Diagram](images/architecture.png)
 
+### 🛠️ Used AWS Services
+ * S3 Bucket
+ * Lambda function and layer
+ * API Gateway
+ * EventBridge
+ * CloudWatch
+
 ## 🚀 Getting started
 
 ## 💻 Local Deployment
