@@ -138,9 +138,9 @@ pip install -r requirements.txt
 
 Now, you can download and preprocess the timeseries data from SMARD.de by using the script `main.py`. Here is a list of all valid commands:
 
-* ``python main.py historical <category> <subcategory>``: Searchs for the missing data of the given category and subcategory on your local disk and fetches them if needed.
-* ``python main.py historical <category> all``: Searchs for all missing data of all subcategories of the given category on your local disk and fetchs them if needed.
-* ``python main.py historical combine``: Combine all historical data from the merged timeseries to one table. Notice that nuclear energy and the market price are excluded. This is due to the fact that there are no data available for some time period (after 15th April 2024 for nuclear energy and before 1th October 2018 for market price).
+* ``python main.py historical <category> <subcategory>``: Searches for the missing data of the given category and subcategory on your local disk and fetches them if needed.
+* ``python main.py historical <category> all``: Searches for all missing data of all subcategories of the given category on your local disk and fetches them if needed.
+* ``python main.py historical combine``: Combine all historical data from the merged timeseries to one table. Notice that nuclear energy and the market price are excluded. This is due to the fact that there are no data available for some time period (after 15th April 2023 for nuclear energy and before 1st October 2018 for market price).
 * ``pyhton main.py merge <category> <subcategory>``: Merges all data blocks of the given category and subcategory to one timeseries.
 * ``python main.py merge <category> all``: Merges all data blocks of all subcategories of the given category to one timeseries.
 * ``python main.py current <category> <subcategory>``: Fetches the data of the given category and subcategory for the current week.
@@ -192,7 +192,7 @@ Change to the directory `dashboard`:
 cd dashboard
 ```
 
-If not already done you have to install the dependicies for the local server by running the following command:
+If not already done you have to install the dependencies for the local server by running the following command:
 ```bash
 pip install -r requirements.txt
 ```
@@ -248,7 +248,9 @@ python upload_to_s3.py
 
 Wait until all data have been pushed to the S3 bucket. After that you can open the dashboard in your browser with the `website_url`.
 
-If you are done, you can end the dashboard from the directory `terraform` by running the folliwing command:
+If you are done, you can end the dashboard from the directory `terraform` by running the following command:
 ```bash
 terraform destroy
 ```
+
+⚠️ **Warning:** Running `terraform destroy` will delete all AWS resources including the S3 bucket and all data stored in it.
