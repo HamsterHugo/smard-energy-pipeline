@@ -212,3 +212,43 @@ python server.py
 Finally open the dashboard in your browser with `http://localhost:5000`.
 
 ## ☁️ AWS Deployment
+
+Check that you set your AWS credentials. If not already set, use the following command and enter your credentials:
+```bash
+aws configure
+```
+
+Check that your virtual environment is active. If not, you can start it with the following command:
+```bash
+.venv\Scripts\activate
+```
+
+Switch to the `terraform` directory:
+```bash
+cd terraform
+```
+
+Run the following commands:
+```bash
+terraform init
+terraform apply
+```
+
+Answer `yes` in the terminal. Eventually you get the `api_url` and the `website_url` in the output of the terminal. In the file `dashboard/frontend/script.js` the API URL for AWS is set in line 7. Replace `https://PLACEHOLDER.execute-api.us-east-1.amazonaws.com` with the `api_url` in the output and save the file.
+
+Now, switch to the directory `aws`:
+```bash
+cd ../aws
+```
+
+Run the following command:
+```bash
+python upload_to_s3.py
+```
+
+Wait until all data have been pushed to the S3 bucket. After that you can open the dashboard in your browser with the `website_url`.
+
+If you are done, you can end the dashboard from the directory `terraform` by running the folliwing command:
+```bash
+terraform destroy
+```
