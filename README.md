@@ -11,6 +11,83 @@ The energy market data come from [Bundesnetzagentur | SMARD.de](https://www.smar
 
 ## 📁 Repository Structure
 
+```text
+smard-energy-pipeline/
+├── aws/
+│   ├── lambda/
+│   │   ├── ingest/
+|   |   |   └── handler.py
+│   │   └── query/
+|   |       └── handler.py
+│   ├── layer.zip
+│   └── upload_to_s3.py
+|
+├── dashboard/
+│   ├── backend/
+|   |   └── server.py
+│   ├── frontend/
+|   |   ├── favicon.ico
+|   |   ├── index.html
+|   |   ├── script.js
+|   |   └── style.css
+│   └── requirements.txt
+|
+├── local/
+│   ├── downloader.py
+│   ├── main.py
+│   └── requirements.txt
+|
+├── screenshots/
+│   └── dashboard.png
+|
+├── smard_pipeline/
+│   ├── __init__.py
+│   ├── config.py
+|   ├── current_week.py
+|   ├── ingest.py
+|   ├── logging_config.py
+|   ├── smard_api.py
+|   ├── storage_s3.py
+│   └── transformations.py
+|
+├── terraform/
+│   ├── modules/
+|   |   ├── api_gateway/
+|   |   |   ├── main.tf
+|   |   |   ├── outputs.tf
+|   |   |   └── variables.tf
+|   |   ├── eventbridge/
+|   |   |   ├── main.tf
+|   |   |   ├── outputs.tf
+|   |   |   └── variables.tf
+|   |   ├── iam/
+|   |   |   ├── main.tf
+|   |   |   ├── outputs.tf
+|   |   |   └── variables.tf
+|   |   ├── lambda/
+|   |   |   ├── main.tf
+|   |   |   ├── outputs.tf
+|   |   |   └── variables.tf
+|   |   ├── lambda_layer/
+|   |   |   ├── main.tf
+|   |   |   ├── outputs.tf
+|   |   |   └── variables.tf
+|   |   └── s3/
+|   |   |   ├── main.tf
+|   |   |   ├── outputs.tf
+|   |   |   └── variables.tf
+|   ├── locals.tf
+|   ├── main.tf
+|   ├── outputs.tf
+|   ├── providers.tf
+|   └── variables.tf
+|
+├── .gitignore
+├── pyproject.toml
+└── README.md
+```
+
+
 ## 🏗️ Architecture & Technologies
 
 ## 🚀 Getting started
