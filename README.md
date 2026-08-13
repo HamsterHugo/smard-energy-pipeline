@@ -181,4 +181,34 @@ After that you will have all data needed for the dashboard.
 
 ## 💻 Local Deployment
 
+Before you can run the dashboard locally on your computer, check that you downloaded and preprocessed all data and that your virtual environment is active. You can do this by using the following command
+
+```bash
+.venv\Scripts\activate
+```
+
+Change to the directory `dashboard`:
+```bash
+cd dashboard
+```
+
+If not already done you have to install the dependicies for the local server by running the following command:
+```bash
+pip install -r requirements.txt
+```
+
+Note, that you have to do this only once.
+
+Switch to the subdirectory `backend`:
+```bash
+cd backend
+```
+
+Now start the local server by running the following command:
+```bash
+python server.py
+```
+
+Finally open the dashboard in your browser with `http://localhost:5000`.
+
 ## ☁️ AWS Deployment
