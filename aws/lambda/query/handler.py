@@ -17,8 +17,8 @@ def lambda_handler(event, context):
     logger: logging.Logger = logging.getLogger(__name__)
 
     # Read parameter from event
+    endpoint: str = event.get('path', {})
     params: dict = event.get('queryStringParameters', {}) or {}
-    endpoint: str = params.get('endpoint', 'data')
     date_from: str = params.get('from', '2026-07-01')
     date_to: str = params.get('to', '2026-07-31')
 
@@ -27,13 +27,13 @@ def lambda_handler(event, context):
     BUCKET_NAME: str = f'smard-energy-pipeline-data-bucket-{ACCOUNT_ID}'
 
     # Load data according endpoint
-    if endpoint == 'data':
+    if endpoint == '/data':
         historical_file: str = S3_PREFIX_HISTORICAL + COMBINED_HISTORICAL
         current_file: str = S3_PREFIX_CURRENT + COMBINED_CURRENT
-    elif endpoint == 'price':
+    elif endpoint == '/price':
         historical_file: str = S3_PREFIX_HISTORICAL + MARKET_PRICE_HISTORICAL
         current_file: str = S3_PREFIX_CURRENT + MARKET_PRICE_CURRENT
-    elif endpoint == 'nuclear':
+    elif endpoint == '/nuclear':
         historical_file: str = S3_PREFIX_HISTORICAL + NUCLEAR_HISTORICAL
         current_file = None
     else:
