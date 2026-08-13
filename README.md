@@ -73,9 +73,9 @@ smard-energy-pipeline/
 |   |   |   ├── outputs.tf
 |   |   |   └── variables.tf
 |   |   └── s3/
-|   |   |   ├── main.tf
-|   |   |   ├── outputs.tf
-|   |   |   └── variables.tf
+|   |       ├── main.tf
+|   |       ├── outputs.tf
+|   |       └── variables.tf
 |   ├── locals.tf
 |   ├── main.tf
 |   ├── outputs.tf
