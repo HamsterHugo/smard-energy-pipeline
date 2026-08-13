@@ -114,7 +114,18 @@ If you are using Visual Studio Code you can do it by executing the following com
 python -m venv .venv
 ```
 
-3. Download and preprocess the historical data from SMARD.de
+You activate the virtual environment with the following command:
+```bash
+.venv\Scripts\activate
+```
+
+3. Install the local Python package `smard-pipeline`:
+Once the virtual environment is installed and activated you have to install the local Python Package `smard-pipeline` by entering the following command into your terminal:
+```bash
+pip install -e .
+```
+
+4. Download and preprocess the historical data from SMARD.de
 You have execute the Python scripts for downloading the timeseries. For that go to the folder `local/`:
 ```bash
 cd local
@@ -135,8 +146,6 @@ Now, you can download and preprocess the timeseries data from SMARD.de by using 
 * ``python main.py current <category> <subcategory>``
 * ``python main.py current <category> all``
 * ``python main.py current combine``
-
-Replace `<category>` and `<subcategory>` with the names of the desired category and subcategory. 
 
 
 ## 💻 Local Deployment
