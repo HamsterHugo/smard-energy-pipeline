@@ -138,14 +138,14 @@ pip install -r requirements.txt
 
 Now, you can download and preprocess the timeseries data from SMARD.de by using the script `main.py`. Here is a list of all valid commands:
 
-* ``python main.py historical <category> <subcategory>``
-* ``python main.py historical <category> all``
-* ``python main.py historical combine``
-* ``pyhton main.py merge <category> <subcategory>``
-* ``python main.py merge <category> all``
-* ``python main.py current <category> <subcategory>``
-* ``python main.py current <category> all``
-* ``python main.py current combine``
+* ``python main.py historical <category> <subcategory>``: Searchs for the missing data of the given category and subcategory on your local disk and fetches them if needed.
+* ``python main.py historical <category> all``: Searchs for all missing data of all subcategories of the given category on your local disk and fetchs them if needed.
+* ``python main.py historical combine``: Combine all historical data from the merged timeseries to one table. Notice that nuclear energy and the market price are excluded. This is due to the fact that there are no data available for some time period (after 15th April 2024 for nuclear energy and before 1th October 2018 for market price).
+* ``pyhton main.py merge <category> <subcategory>``: Merges all data blocks of the given category and subcategory to one timeseries.
+* ``python main.py merge <category> all``: Merges all data blocks of all subcategories of the given category to one timeseries.
+* ``python main.py current <category> <subcategory>``: Fetches the data of the given category and subcategory for the current week.
+* ``python main.py current <category> all``: Fetches the data of all subcategories of the given category for the current week.
+* ``python main.py current combine``: Combine all needed data for the dashboard of the current week to one table.
 
 Replace `<category>` and `<subcategory>` with the names of the desired category and subcategory. The following table lists all categories and subcategories:
 
