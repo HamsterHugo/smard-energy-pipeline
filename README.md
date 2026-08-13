@@ -147,6 +147,15 @@ Now, you can download and preprocess the timeseries data from SMARD.de by using 
 * ``python main.py current <category> all``
 * ``python main.py current combine``
 
+Replace `<category>` and `<subcategory>` with the names of the desired category and subcategory. The following table lists all categories and subcategories:
+
+| **Category** | **Subcategory** |
+|--------------|-----------------|
+| Stromerzeugung | Braunkohle, Kernenergie, Wind Offshore, Wasserkraft, Sonstige Konventionelle, Sonstige Erneuerbare, Biomasse, Wind Onshore, Photovoltaik, Steinkohle, Pumpspeicher, Erdgas |
+| Stromverbrauch | Gesamt (Netzlast), Residuallast, Pumpspeicher |
+| Marktpreis | Deutschland-Luxemburg, Anrainer DE-LU, Belgien, Norwegen 2, Österreich, Dänemark 1, Dänemark 2, Frankreich, Italien (Nord), Niederlande, Polen 1, Polen 2, Schweiz, Slowenien, Tschechien, Ungarn |
+| Prognostizierte Erzeugung | Offshore, Onshore, Photovoltaik, Sonstige, Wind und Photovoltaik, Gesamt |
+
 
 ## 💻 Local Deployment
 
