@@ -236,7 +236,7 @@ terraform apply
 
 Answer `yes` in the terminal.
 
-Finally, you have to upload all data and the dashboard to the S3 bucket. Do so by runnging the following command:
+Finally, you have to upload all data and the dashboard to the S3 bucket. Do so by running the following command:
 ```bash
 python ../aws/upload_to_s3.py
 ```
