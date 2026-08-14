@@ -1,5 +1,8 @@
-from pathlib import Path
 import logging
+import re
+import subprocess
+import json
+from pathlib import Path
 
 import boto3
 
@@ -84,11 +87,45 @@ def upload_frontend() -> None:
         logger.info(f"Upload: {counter}/{l} files", extra={"status": "complete"})
 
 if __name__ == '__main__':
+    # Initialze logger.
     setup_logging(level=logging.INFO)
     logger: logging.Logger = logging.getLogger('upload_to_s3')
-    s3 = boto3.client('s3')
 
+    # Get the API url from terraform output.
+    logger.info('Get the API URL from the terraform output...')
+    result = subprocess.run(
+        ['terraform', 'output', '-json'],
+        cwd='../terraform',
+        capture_output=True,
+        text=True
+    )
+
+    try:
+        outputs: dict = json.loads(result.stdout)
+        api_url: str = outputs['api_url']['value']
+        website_url: str = outputs['website_url']['value']
+        logger.info(f"API URL found: {api_url}", extra={"status": "success"})
+    except Exception:
+        logger.critical(
+            f"Error while parsing the terraform output!",
+            exc_info=True
+        )
+        exit(1)
+
+    # Write API URL into script.js.
+    script_js: Path = FRONTEND_DIR / 'script.js'
+    content: str = script_js.read_text()
+
+    old_url_pattern = r'https:.+prod'
+    content = re.sub(old_url_pattern, api_url, content)
+    script_js.write_text(content)
+    logger.info("Replaced api_url in 'script.js'.", extra={"status": "success"})
+
+    # Upload all needed data to the s3 bucket.
+    s3 = boto3.client('s3')
     upload_historical_data()
     upload_frontend()
+
+    logger.info(f"Dashboard-URL: {website_url}")
 
     save_log_to_html("upload_report")

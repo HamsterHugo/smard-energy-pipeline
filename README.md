@@ -234,14 +234,16 @@ terraform init
 terraform apply
 ```
 
-Answer `yes` in the terminal. Eventually you get the `api_url` and the `website_url` in the output of the terminal. In the file `dashboard/frontend/script.js` the API URL for AWS is set in line 7. Replace `https://PLACEHOLDER.execute-api.us-east-1.amazonaws.com` with the `api_url` in the output and save the file.
+Answer `yes` in the terminal.
 
 Finally, you have to upload all data and the dashboard to the S3 bucket. Do so by runnging the following code:
 ```bash
 python ../aws/upload_to_s3.py
 ```
 
-Wait until all data have been pushed to the S3 bucket. After that you can open the dashboard in your browser with the `website_url`.
+Wait until all data have been pushed to the S3 bucket. Notice that this script will change the API URL in the file `aws/upload_to_s3.py`.
+
+You will find the URL for the application in the output. Just open it in your browser.
 
 If you are done, you can end the dashboard from the directory `terraform` by running the following command:
 ```bash
