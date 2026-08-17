@@ -97,6 +97,7 @@ smard-energy-pipeline/
 ### 🛠️ Used AWS Services
  * S3 Bucket
  * Lambda function and layer
+ * IAM Role
  * API Gateway
  * EventBridge
  * CloudWatch
