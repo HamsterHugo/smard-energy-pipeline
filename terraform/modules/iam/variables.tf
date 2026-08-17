@@ -13,13 +13,3 @@ variable "tags" {
   type        = map(string)
   default     = {}
 }
-
-#variable "lambda_role_name" {
-#  description = "Name of the IAM role for Lambda."
-#  type        = string
-#}
-
-#variable "s3_bucket_name" {
-#  description = "Name of the S3 bucket for which the role should get access."
-#  type        = string
-#}
