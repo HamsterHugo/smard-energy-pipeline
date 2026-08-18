@@ -126,8 +126,8 @@ Once the virtual environment is installed and activated you have to install the 
 pip install -e .
 ```
 
-4. Download and preprocess the historical data from SMARD.de
-You have execute the Python scripts for downloading the timeseries. For that go to the folder `local/`:
+4. Download and preprocess the historical data from SMARD.de:
+You have to execute the Python scripts for downloading the timeseries. For that go to the folder `local/`:
 ```bash
 cd local
 ```
