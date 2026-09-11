@@ -252,7 +252,54 @@ function renderCharts(data, priceData, nuclearData = []) {
         yaxis: { title: 'MWh' }
     });
 
-    // Chart 3 — Marketprice
+    // Chart 3 - Generation Mix Share (Pie)
+    const pieContainer = document.getElementById('chart-pie');
+    pieContainer.innerHTML = '';
+
+    // Generation by source
+    const pieSources = nuclearData.length > 0
+        ? [NUCLEAR_SOURCE, ...GENERATION_SOURCES]
+        : [...GENERATION_SOURCES];
+    
+    const pieValues = pieSources.map(source => {
+        if (source.key === 'Kernenergie') {
+            return nuclearData.reduce((sum, d) => sum + (d['Kernenergie'] ?? 0), 0);
+        }
+        return data.reduce((sum, d) => sum + (d[source.key] ?? 0), 0);
+    });
+
+    const pieLabels = pieSources.map(s => ENGLISH_MAPPING[s.key]);
+    const pieColors = pieSources.map(s => s.color);
+
+    // Filter sources with zeros.
+    const filteredPie = pieSources.reduce((acc, source, i) => {
+        if (pieValues[i] > 0) {
+            acc.labels.push(pieLabels[i]);
+            acc.values.push(pieValues[i]);
+            acc.colors.push(pieColors[i]);
+        }
+        return acc;
+    }, {labels: [], values: [], colors: []});
+
+    Plotly.newPlot('chart-pie', [{
+        type: 'pie',
+        labels: filteredPie.labels,
+        values: filteredPie.values,
+        marker: { colors: filteredPie.colors },
+        textinfo: 'percent',
+        hovertemplate: '%{label}<br>%{percent}<extra></extra>',
+        hole: 0.3
+    }], {
+        ...LAYOUT_BASE,
+        showlegend: true,
+        legend: {
+            bgcolor: '#16213e',
+            font: { size: 10 }
+        },
+        margin: { t: 10, r: 10, b: 10, l: 10 }
+    });
+
+    // Chart 4 — Marketprice
     const priceContainer = document.getElementById('chart-price');
     priceContainer.innerHTML = '';
 
