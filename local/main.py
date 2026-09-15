@@ -2,6 +2,7 @@ import sys
 import logging
 
 from downloader import update_raw_data, download_current_week
+from local_transformations import process_and_store_single_timeseries
 from smard_pipeline.config import CATEGORIES
 from smard_pipeline.transformations import merge_raw_data, combine_data
 from smard_pipeline.logging_config import setup_logging, save_log_to_html
@@ -51,6 +52,7 @@ if __name__ == '__main__':
             f(category, subcategory)
     else:
         combine_data(sys.argv[1])
+        process_and_store_single_timeseries('Marktpreis', 'Deutschland-Luxemburg')
 
     save_log_to_html('_'.join(sys.argv[1:]))
 

@@ -10,20 +10,40 @@ CORS(app)
 
 # Set paths to the preprocessed data.
 DATA_PATH: Path = Path(__file__).parent.parent.parent / 'data' / 'preprocessed_data'
+
+# Historical data
 POWER_GENERATION_PATH: Path = DATA_PATH / 'combined_historical.parquet'
 PRICE_PATH: Path = DATA_PATH / '4169_historical.parquet'
 NUCLEAR_PATH: Path = DATA_PATH / '1224_historical.parquet'
+
+# Data of the current week
+CURRENT_POWER_GENERATION_PATH: Path = DATA_PATH / 'combined_current.parquet'
+CURRENT_PRICE_PATH: Path = DATA_PATH / '4169_current.parquet'
 
 x = datetime.datetime.now()
 y = x - datetime.timedelta(days=7)
 TODAY: str = str(x.date())
 LAST_WEEK: str = str(y.date())
 
-def query_parquet(path: Path, date_from: str, date_to: str) -> list:
+def query_combined(
+        historical_path: Path,
+        current_path: Path | None,
+        date_from: str,
+        date_to: str
+    ) -> list:
+    """Queries historical and current parquet files and merges them."""
     con = duckdb.connect()
+
+    # Look for paths
+    paths: list = [str(historical_path)]
+    if current_path is not None and current_path.exists():
+        paths.append(str(current_path))
+
+    paths_str: str = "['" + "', '".join(paths) + "']"
+
     df = con.execute(f"""
         SELECT *
-        FROM read_parquet('{path}')
+        FROM read_parquet({paths_str})
         WHERE timestamps BETWEEN '{date_from}' AND '{date_to}'
         ORDER BY timestamps
     """).fetchdf()
@@ -34,19 +54,33 @@ def query_parquet(path: Path, date_from: str, date_to: str) -> list:
 def get_data():
     date_from = request.args.get('from', LAST_WEEK)
     date_to = request.args.get('to', TODAY)
-    return jsonify(query_parquet(POWER_GENERATION_PATH, date_from, date_to))
+    return jsonify(
+        query_combined(
+            POWER_GENERATION_PATH,
+            CURRENT_POWER_GENERATION_PATH,
+            date_from,
+            date_to
+        )
+    )
 
 @app.route('/price')
 def get_price():
     date_from = request.args.get('from', LAST_WEEK)
     date_to = request.args.get('to', TODAY)
-    return jsonify(query_parquet(PRICE_PATH, date_from, date_to))
+    return jsonify(
+        query_combined(
+            PRICE_PATH,
+            CURRENT_PRICE_PATH,
+            date_from,
+            date_to
+        )
+    )
 
 @app.route('/nuclear')
 def get_nuclear():
     date_from = request.args.get('from', '2023-04-01')
     date_to = request.args.get('to', '2023-04-15')
-    return jsonify(query_parquet(NUCLEAR_PATH, date_from, date_to))
+    return jsonify(query_combined(NUCLEAR_PATH, None, date_from, date_to))
 
 @app.route('/')
 def index():
