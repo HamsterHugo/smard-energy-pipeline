@@ -30,7 +30,7 @@ def process_and_store_single_timeseries(category: str, subcategory: str) -> None
         logger.warning(f"File {file} not found. You have to download it.")
         return
     else:
-        logger.info(f"File {file} found.")
+        logger.info(f"File {file_name} found.")
 
     # Load the file.
     try:
