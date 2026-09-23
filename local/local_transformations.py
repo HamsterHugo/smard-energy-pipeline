@@ -41,7 +41,7 @@ def process_and_store_single_timeseries(category: str, subcategory: str) -> None
 
         output_dir: Path = PREPROCESSED_DATA_DIR / f"{smard_id}_current.parquet"
 
-        df.to_parquet(output_dir, index=False)
+        df.to_parquet(output_dir)
         logger.info(f'File saved: {output_dir.name}', extra={"status": "success"})
     except Exception as e:
         logger.error(

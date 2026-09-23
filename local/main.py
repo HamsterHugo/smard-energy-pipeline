@@ -52,7 +52,8 @@ if __name__ == '__main__':
             f(category, subcategory)
     else:
         combine_data(sys.argv[1])
-        process_and_store_single_timeseries('Marktpreis', 'Deutschland-Luxemburg')
+        if sys.argv[1] == 'current':
+            process_and_store_single_timeseries('Marktpreis', 'Deutschland-Luxemburg')
 
     save_log_to_html('_'.join(sys.argv[1:]))
 

@@ -43,7 +43,7 @@ def query_combined(
 
     df = con.execute(f"""
         SELECT *
-        FROM read_parquet({paths_str})
+        FROM read_parquet({paths_str}, union_by_name=True)
         WHERE timestamps BETWEEN '{date_from}' AND '{date_to}'
         ORDER BY timestamps
     """).fetchdf()
